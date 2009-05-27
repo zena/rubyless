@@ -19,48 +19,48 @@ For every class that will be involved in your RubyLess scripts, you need to prov
 you want to enable methods from this class. If you want to enable methods on any class like 'to_i', you can add these to
 your helper's 'any_safe_method?' method.
 
-  # signature is made of [method, arg_class, arg_class, ...]
-	class Node
-	  def self.safe_method?(signature)
-	    {
-	      [:ancestor?, Node] => Boolean,
-	    }[signature]
-	  end
-	end
-	
-	# methods defined in helper
-	
-	# global methods
-	def safe_method?(signature)
-	  {
-	    [:strftime, Time, String] => String,
-	  }[signature]
-	end
-	
-	# methods allowed on any object
-	def any_safe_method?(signature)
-	  {
-	    [:to_i] => Number,
-	    [:to_s] => String,
-	  }[signature]
-	end
-	
-	# allowed variable names with type and rewriting
-	def variable(name)
-	  { 'prev' => ['@node.prev', Node],
-	    'main' => ['@node', Node],
-	    'node' => [context[:node], context[:node_class]],
-	    'id'   => ["#{context[:node]}.zip", Number],
-	    'now'  => ["Time.now", Time],
-	    'name' => ["#{context[:node]}.name", String],
-	  }[name]
-	end
+ # signature is made of [method, arg_class, arg_class, ...]
+ class Node
+   def self.safe_method?(signature)
+     {
+       [:ancestor?, Node] => Boolean,
+     }[signature]
+   end
+ end
+ 
+ # methods defined in helper
+ 
+ # global methods
+ def safe_method?(signature)
+   {
+     [:strftime, Time, String] => String,
+   }[signature]
+ end
+ 
+ # methods allowed on any object
+ def any_safe_method?(signature)
+   {
+     [:to_i] => Number,
+     [:to_s] => String,
+   }[signature]
+ end
+ 
+ # allowed variable names with type and rewriting
+ def variable(name)
+   { 'prev' => ['@node.prev', Node],
+     'main' => ['@node', Node],
+     'node' => [context[:node], context[:node_class]],
+     'id'   => ["#{context[:node]}.zip", Number],
+     'now'  => ["Time.now", Time],
+     'name' => ["#{context[:node]}.name", String],
+   }[name]
+ end
 
 You can now parse some ruby code:
 
-  RubyLess.translate("!prev.ancestor?(main) && !node.ancestor?(main)", self)
-	RubyLess.translate("id > 45 and (3 > -id or 3+3)", self)
-	RubyLess.translate("strftime(now, '%Y')", self)
+ RubyLess.translate("!prev.ancestor?(main) && !node.ancestor?(main)", self)
+ RubyLess.translate("id > 45 and (3 > -id or 3+3)", self)
+ RubyLess.translate("strftime(now, '%Y')", self)
   
   
 == REQUIREMENTS:
