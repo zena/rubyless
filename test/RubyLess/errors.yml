@@ -1,0 +1,7 @@
+unknown_global_method:
+  src: "system('echo date')"
+  res: "Unknown method 'system(\"echo date\")'."
+
+bad_argument_types:
+  src: "strftime(34,'ffoo')"
+  res: "Unknown method 'strftime(34, \"ffoo\")'."

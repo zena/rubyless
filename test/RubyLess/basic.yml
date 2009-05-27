@@ -1,0 +1,20 @@
+empty:
+  src: ""
+  res: null
+
+numbers:
+  src: "id > 45 and (3 > -id or 3+3)"
+  res: "(var1.zip>45 and (3>-var1.zip or 3+3))"
+
+global_method:
+  src: "strftime(now, '%Y')"
+  res: "strftime(Time.now, \"%Y\")"
+
+dynamic_string:
+  src: "strftime(now, \"#{name}\")"
+  res: "strftime(Time.now, \"#{var1.name}\")"
+
+method_on_any_object:
+  src: "strftime(now, \"#{name}\").to_i + 45.to_i"
+  res: "strftime(Time.now, \"#{var1.name}\").to_i+45.to_i"
+

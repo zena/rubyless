@@ -1,0 +1,97 @@
+= RubyLess
+
+* http://github.com/zena/rubyless/tree/master
+
+== DESCRIPTION:
+
+RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked
+ruby, eventually rewriting some variables or methods. The goal is twofold:
+
+ 1. give ruby scripting access to users without security risk
+ 2. rewrite variable names depending on compilation context
+ 3. provide good compile time error checking (typed ruby)
+
+This library is heavily based on Ruby2Ruby by Ryan Davis, thanks to him for sharing his work.
+
+== SYNOPSIS:
+  
+For every class that will be involved in your RubyLess scripts, you need to provide a 'safe_method?' class method in case
+you want to enable methods from this class. If you want to enable methods on any class like 'to_i', you can add these to
+your helper's 'any_safe_method?' method.
+
+  # signature is made of [method, arg_class, arg_class, ...]
+	class Node
+	  def self.safe_method?(signature)
+	    {
+	      [:ancestor?, Node] => Boolean,
+	    }[signature]
+	  end
+	end
+	
+	# methods defined in helper
+	
+	# global methods
+	def safe_method?(signature)
+	  {
+	    [:strftime, Time, String] => String,
+	  }[signature]
+	end
+	
+	# methods allowed on any object
+	def any_safe_method?(signature)
+	  {
+	    [:to_i] => Number,
+	    [:to_s] => String,
+	  }[signature]
+	end
+	
+	# allowed variable names with type and rewriting
+	def variable(name)
+	  { 'prev' => ['@node.prev', Node],
+	    'main' => ['@node', Node],
+	    'node' => [context[:node], context[:node_class]],
+	    'id'   => ["#{context[:node]}.zip", Number],
+	    'now'  => ["Time.now", Time],
+	    'name' => ["#{context[:node]}.name", String],
+	  }[name]
+	end
+
+You can now parse some ruby code:
+
+  RubyLess.translate("!prev.ancestor?(main) && !node.ancestor?(main)", self)
+	RubyLess.translate("id > 45 and (3 > -id or 3+3)", self)
+	RubyLess.translate("strftime(now, '%Y')", self)
+  
+  
+== REQUIREMENTS:
+
+* parse_tree
+
+== INSTALL:
+
+sudo gem install rubyless
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2009 Gaspard Bucher
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
