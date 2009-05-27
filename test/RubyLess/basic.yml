@@ -18,3 +18,6 @@ method_on_any_object:
   src: "strftime(now, \"#{name}\").to_i + 45.to_i"
   res: "strftime(Time.now, \"#{var1.name}\").to_i+45.to_i"
 
+rewrite_variables:
+  src: "!prev.ancestor?(main) && !node.ancestor?(main)"
+  res: "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
