@@ -58,7 +58,6 @@ your helper's 'any_safe_method?' method.
 
 You can now parse some ruby code:
 
- 
  RubyLess.translate("!prev.ancestor?(main) && !node.ancestor?(main)", self)
  => "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
  
