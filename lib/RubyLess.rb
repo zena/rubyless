@@ -53,6 +53,9 @@ module RubyLess
       opts ||= {:class => String}
       replace(content)
       @opts = opts.dup
+      if could_be_nil? && !@opts[:cond]
+        @opts[:cond] = [self.to_s]
+      end
     end
     
     def klass
@@ -77,16 +80,31 @@ module RubyLess
     end
 
     def <<(typed_string)
+      append_opts(typed_string)
       if self.empty?
-        @opts = typed_string.opts
-        replace(typed_string)
-      elsif klass.kind_of?(Array)
-        klass << typed_string.klass
-        replace("#{self}, #{typed_string}")
+        replace(typed_string.raw)
       else
-        @opts[:class] = [klass, typed_string.klass]
-        replace("#{self}, #{typed_string}")
+        replace("#{self.raw}, #{typed_string.raw}")
       end
+    end
+    
+    def append_opts(typed_string)
+      if self.empty?
+        @opts = typed_string.opts.dup
+      else
+        if klass.kind_of?(Array)
+          klass << typed_string.klass
+        else
+          @opts[:class] = [klass, typed_string.klass]
+        end
+        append_cond(typed_string.cond) if typed_string.could_be_nil?
+      end
+    end
+    
+    def append_cond(condition)
+      @opts[:cond] ||= []
+      @opts[:cond] += [condition].flatten
+      @opts[:cond].uniq!
     end
   end
 
@@ -161,7 +179,7 @@ module RubyLess
 
     def process_array(exp)
       res = process_arglist(exp)
-      exp.size > 1 ? t("[#{res}]", res.klass) : res
+      exp.size > 1 ? t("[#{res}]", res.opts) : res
     end
 
     def process_vcall(exp)
@@ -199,16 +217,21 @@ module RubyLess
         TypedString.new(content, opts)
       end
       
-      def t_if(receiver, true_res, opts)
-        if receiver.could_be_nil?
-          condition = receiver.cond || receiver
+      def t_if(cond, true_res, opts)
+        if cond != []
+          if cond.size > 1
+            condition = "(#{cond.join(' && ')})"
+          else
+            condition = cond.join('')
+          end
+          
           # we can append to 'raw'
           if opts[:nil]
             # applied method could produce a nil value (so we cannot concat method on top of 'raw' and only check previous condition)
             t "(#{condition} ? #{true_res} : nil)", opts
           else
             # we can keep on checking only 'condition' and appending methods to 'raw'
-            t "(#{condition} ? #{true_res} : nil)", opts.merge(:nil => true, :cond => condition, :raw => true_res)
+            t "(#{condition} ? #{true_res} : nil)", opts.merge(:nil => true, :cond => cond, :raw => true_res)
           end
         else
           t true_res, opts
@@ -219,30 +242,36 @@ module RubyLess
         method = exp.shift
         if args = exp.shift rescue nil
           args = process args || []
-          signature = [method] + [args.klass].flatten
+          signature = [method] + [args.klass].flatten ## FIXME: error prone !
+          # execution conditional
+          cond = args.cond || []
         else
           args = []
           signature = [method]
+          cond = []
         end
-
+        
         if receiver
-          raise "'#{receiver}' does not respond to '#{method}(#{args})'." unless opts = get_method(signature, receiver.klass)
+          if receiver.could_be_nil?
+            cond += receiver.cond
+          end
+          raise "'#{receiver}' does not respond to '#{method}(#{args.raw})'." unless opts = get_method(signature, receiver.klass)
           method = opts[:method] if opts[:method]
           if method == :/
-            t_if receiver, "(#{receiver.raw}#{method}#{args} rescue nil)", opts.merge(:nil => true)
+            t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
           elsif INFIX_OPERATOR.include?(method)
-            t_if receiver, "(#{receiver.raw}#{method}#{args})", opts
+            t_if cond, "(#{receiver.raw}#{method}#{args.raw})", opts
           elsif PREFIX_OPERATOR.include?(method)
-            t_if receiver, "#{method.to_s[0..0]}#{receiver.raw}", opts
+            t_if cond, "#{method.to_s[0..0]}#{receiver.raw}", opts
           else
-            args = "(#{args})" if args != []
-            t_if receiver, "#{receiver.raw}.#{method}#{args}", opts
+            args = "(#{args.raw})" if args != []
+            t_if cond, "#{receiver.raw}.#{method}#{args}", opts
           end
         else
-          raise "Unknown method '#{method}(#{args})'." unless opts = get_method(signature, @helper, false)
+          raise "Unknown method '#{method}(#{args.raw})'." unless opts = get_method(signature, @helper, false)
           method = opts[:method] if opts[:method]
-          args = "(#{args})" if args != []
-          t "#{method}#{args}", opts
+          args = "(#{args.raw})" if args != []
+          t_if cond, "#{method}#{args}", opts
         end
       end
 

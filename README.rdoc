@@ -5,13 +5,13 @@
 == DESCRIPTION:
 
 RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked
-ruby, eventually rewriting some variables or methods. The goal is twofold:
+ruby, eventually rewriting some variables or methods. The goals:
 
- 1. give ruby scripting access to users without security risk
+ 1. give ruby scripting access to users without any security risk
  2. rewrite variable names depending on compilation context
- 3. provide good compile time error checking (typed ruby)
+ 3. never raise runtime errors through compile time type checking and powerful nil handling 
 
-This library is heavily based on Ruby2Ruby by Ryan Davis, thanks to him for sharing his work.
+This library is based on Ruby2Ruby by Ryan Davis, thanks to him for sharing his work.
 
 == SYNOPSIS:
   
@@ -49,6 +49,9 @@ You can now parse some ruby code:
  
  RubyLess.translate("strftime(now, '%Y')", self)
  => "strftime(Time.now, \"%Y\")"
+ 
+ RubyLess.translate("log_info(spouse, spouse.name)", self)
+ => "(var1.spouse ? log_info(var1.spouse, var1.spouse.name) : nil)"
 
 Since most of the code in SafeClass is string evaluated (to scope class variables), there is not much to parse for rdoc. You
 can look at the tests for an idea of how to declare things. If you have more questions, ask on zena's mailing list:

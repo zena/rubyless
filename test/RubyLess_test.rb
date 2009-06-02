@@ -9,11 +9,14 @@ class SimpleHelper < Test::Unit::TestCase
   safe_method :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
   safe_method :now  => {:class => Time,  :method => 'Time.now'}
   safe_method [:strftime, Time, String] => String
+  safe_method [:vowel_count, String]    => RubyLess::Number
+  safe_method [:log_info, Dummy, String]    => String
   safe_method_for String, [:==, String] => RubyLess::Boolean
   safe_method_for String, [:to_s] => String
   
   def safe_method?(signature)
     unless res = self.class.safe_method?(signature)
+      # try to execute method in the current var "var.method"
       if res = context[:node_class].safe_method?(signature)
         res = res.call(self) if res.kind_of?(Proc)
         res[:method] = "#{context[:node]}.#{res[:method] || signature[0]}"
@@ -24,6 +27,14 @@ class SimpleHelper < Test::Unit::TestCase
   
   def var1
     Dummy.new
+  end
+  
+  def vowel_count(str)
+    str.tr('^aeiouy', '').size
+  end
+  
+  def log_info(obj, msg)
+    "[#{obj.name}] #{msg}"
   end
   
   def yt_do_test(file, test, context = yt_get('context',file,test))

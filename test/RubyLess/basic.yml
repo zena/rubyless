@@ -59,3 +59,23 @@ method_ternary_op:
   src: "id > 2 ? 'foo' : 'bar'"
   tem: "(var1.zip>2) ? \"foo\" : \"bar\""
   res: "foo"
+
+method_argument_can_be_nil:
+  src: "vowel_count(spouse.name)"
+  tem: "(var1.spouse ? vowel_count(var1.spouse.name) : nil)"
+  
+multi_arg_method_argument_can_be_nil:
+  src: "log_info(spouse, 'foobar')"
+  tem: "(var1.spouse ? log_info(var1.spouse, \"foobar\") : nil)"
+  
+multi_arg_method_arguments_can_be_nil:
+  src: "log_info(husband, spouse.name)"
+  tem: "((var1.husband && var1.spouse) ? log_info(var1.husband, var1.spouse.name) : nil)"
+  
+multi_arg_method_arguments_can_be_nil_same_condition:
+  src: "log_info(spouse, spouse.name)"
+  tem: "(var1.spouse ? log_info(var1.spouse, var1.spouse.name) : nil)"
+
+literal_argument_for_method:
+  src: "vowel_count('ruby')"
+  res: "2"

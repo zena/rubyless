@@ -7,6 +7,7 @@ class Dummy
   safe_method :children            => ['Dummy']
   safe_method :project             => 'Dummy'
   safe_method :spouse              => {:class => 'Dummy', :nil => true}
+  safe_method :husband             => {:class => 'Dummy', :nil => true}
   safe_method :id                  => {:class => RubyLess::Number, :method => :zip}
   safe_method :name                => String
   
@@ -21,6 +22,10 @@ class Dummy
   
   # This method can return nil and must be declared with :nil => true
   def spouse
+    nil
+  end
+  
+  def husband
     nil
   end
   
