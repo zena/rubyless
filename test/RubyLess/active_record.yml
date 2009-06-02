@@ -1,0 +1,8 @@
+time_type_from_columns:
+  src: 'log_at.strftime("%Y")'
+  tem: "(var1.log_at ? var1.log_at.strftime(\"%Y\") : nil)"
+
+text_type_from_columns:
+  src: 'birth.strftime(format)'
+  tem: "Date.parse('2009-06-02 18:44').strftime(var1.format)"
+  res: '02.06.2009'

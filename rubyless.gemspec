@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gaspard Bucher"]
-  s.date = %q{2009-05-28}
+  s.date = %q{2009-06-02}
   s.email = %q{gaspard@teti.ch}
   s.extra_rdoc_files = ["README.rdoc"]
-  s.files = ["History.txt", "Rakefile", "README.rdoc", "rubyless.gemspec", "test/mock", "test/mock/dummy_class.rb", "test/RubyLess", "test/RubyLess/basic.yml", "test/RubyLess/errors.yml", "test/test_helper.rb", "test/test_RubyLess.rb", "lib/RubyLess.rb", "lib/SafeClass.rb"]
+  s.files = ["History.txt", "Rakefile", "README.rdoc", "rubyless.gemspec", "test/mock", "test/mock/dummy_class.rb", "test/RubyLess", "test/RubyLess/basic.yml", "test/RubyLess/errors.yml", "test/RubyLess_test.rb", "test/test_helper.rb", "lib/RubyLess.rb", "lib/SafeClass.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://zenadmin.org/546}
   s.rdoc_options = ["--main", "README.rdoc"]

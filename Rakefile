@@ -1,7 +1,7 @@
 require "rubygems"
 require "rake/gempackagetask"
 require "rake/rdoctask"
-require "lib/RubyLess"
+require "lib/rubyless"
 
 task :default => :test
 

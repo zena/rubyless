@@ -35,9 +35,14 @@ return 'nil' instead of the declared output, you need to wrap your final ruby 'e
  safe_method_for String, [:==, String] => RubyLess::Boolean
  safe_method_for String, [:to_s] => String
 
-You can also redefine 'safe_method?' for any class or for the main helper in order to do some more complicated renaming. Note
+You can also redefine 'safe_method_type' for any class or for the main helper in order to do some more complicated renaming. Note
 also that you should add ':nil => true' declaration to any method that could return a nil value so that RubyLess can render
 code that will not break during runtime (adding nil checking in the form of "foo ? foo.name : nil").
+
+Or you can group all declarations in a single place with 'safe_method_for':
+
+ RubyLess::SafeClass.safe_method_for Dummy, :prev => {:class => Dummy, :method => 'previous', :nil => true},
+                                            :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
 
 You can now parse some ruby code:
 
@@ -53,8 +58,7 @@ You can now parse some ruby code:
  RubyLess.translate("log_info(spouse, spouse.name)", self)
  => "(var1.spouse ? log_info(var1.spouse, var1.spouse.name) : nil)"
 
-Since most of the code in SafeClass is string evaluated (to scope class variables), there is not much to parse for rdoc. You
-can look at the tests for an idea of how to declare things. If you have more questions, ask on zena's mailing list:
+You can look at the tests for an idea of how to declare things. If you have more questions, ask on zena's mailing list:
 
 http://zenadmin.org/community
   

@@ -7,16 +7,16 @@ numbers:
   tem: "((var1.zip>45) and ((3>-var1.zip) or (3+3)))"
 
 global_method:
-  src: "strftime(now, '%Y')"
-  tem: "strftime(Time.now, \"%Y\")"
+  src: "now.strftime('%Y')"
+  tem: "Time.now.strftime(\"%Y\")"
 
 dynamic_string:
-  src: "strftime(now, \"#{name}\")"
-  tem: "strftime(Time.now, \"#{var1.name}\")"
+  src: "now.strftime(\"#{name}\")"
+  tem: "Time.now.strftime(\"#{var1.name}\")"
 
 dynamic_string_again:
-  src: "strftime(now, \"#{name}\")"
-  tem: "strftime(Time.now, \"#{var1.name}\")"
+  src: "now.strftime(\"#{name}\")"
+  tem: "Time.now.strftime(\"#{var1.name}\")"
 
 rewrite_variables:
   src: "!prev.ancestor?(main) && !node.ancestor?(main)"
