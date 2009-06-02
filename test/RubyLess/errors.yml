@@ -11,6 +11,10 @@ zero_div:
   tem: "(1/(var1.zip-10) rescue nil)"
   res: ""
   
-no_looping:
+looping:
   src: "while(true) do puts 'flood' end"
   res: 'Bug! Unknown node-type :while to RubyLess::RubyLessProcessor'
+
+add_two_strings:
+  src: "name + 14"
+  res: "'var1.name' does not respond to '+(14)'."

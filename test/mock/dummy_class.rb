@@ -13,7 +13,7 @@ class Dummy < RubyLess::ActiveRecordMock
               :id                  => {:class => RubyLess::Number, :method => :zip},
               :name                => String
              
-  safe_attribute :title, :age, :friend_id, :log_at, :format
+  safe_attribute :age, :friend_id, :log_at, :format
   
   def initialize(name = 'dummy')
     @name = name

@@ -71,11 +71,11 @@ module RubyLess
               elsif att.to_s =~ /_at$/
                 opts[:class] = Time
               else
-                raise "Could not declare safe_method for '\#{att}': could not guess return type"
+                raise "Could not declare safe_method for '#{att}': could not guess return type"
               end
               safe_method att.to_sym => opts
             else
-              puts "Warning: could not declare safe_attribute '\#{att}' (No column with this name found in class \#{self})"
+              puts "Warning: could not declare safe_attribute '#{att}' (No column with this name found in class #{self})"
             end
           end
         end

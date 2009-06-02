@@ -6,3 +6,14 @@ text_type_from_columns:
   src: 'birth.strftime(format)'
   tem: "Date.parse('2009-06-02 18:44').strftime(var1.format)"
   res: '02.06.2009'
+
+number_type_from_columns:
+  src: "age + 15"
+  tem: "(var1.age+15)"
+  res: "20"
+
+number_type_from_columns_no_default:
+  src: "friend_id + 15"
+  tem: "(var1.friend_id ? (var1.friend_id+15) : nil)"
+  res: ""
+
