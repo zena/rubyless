@@ -3,7 +3,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require 'rubygems'
 require 'parse_tree'
-
+require 'SafeClass'
 =begin rdoc
 =end
 module RubyLess
@@ -13,60 +13,87 @@ module RubyLess
     RubyLessProcessor.translate(string, helper)
   end
   
-  class Number
-    def self.safe_method?(signature)
-      {
-        [:"<=>", Number] => Boolean,
-        [:==, Number] => Boolean,
-        [:< , Number] => Boolean,
-        [:> , Number] => Boolean,
-        [:<=, Number] => Boolean,
-        [:>=, Number] => Boolean,
-
-        [:- , Number] => Number,
-        [:+ , Number] => Number,
-        [:* , Number] => Number,
-        [:/ , Number] => Number,
-        [:% , Number] => Number,
-
-        [:"-@"]       => Number,
-      }[signature]
-    end
-  end
-
   class Boolean
   end
+  
+  class Number
+    include SafeClass
+    safe_method( [:==, Number] => Boolean, [:< , Number] => Boolean, [:> , Number] => Boolean, [:<=, Number] => Boolean, [:>=, Number] => Boolean,
+                 [:- , Number] => Number,  [:+ , Number] => Number,  [:* , Number] => Number,  [:/ , Number] => Number,
+                 [:% , Number] => Number,  [:"-@"]       => Number )
+  end
+  
+  
+  class Missing
+    [:==, :< , :> , :<=, :>=, :"?"].each do |sym|
+      define_method(sym) do |arg|
+        false
+      end
+    end
+    
+    def to_s
+      ''
+    end
+    
+    def nil?
+      true
+    end
+    
+    def method_missing(*meth)
+      self
+    end
+  end
+  
+  Nil = Missing.new
 
   class TypedString < String
-    attr_reader :klass
+    attr_reader :klass, :opts
 
-    def initialize(content = "", klass = [])
+    def initialize(content = "", opts = nil)
+      opts ||= {:class => String}
       replace(content)
-      @klass = klass
+      @opts = opts.dup
+    end
+    
+    def klass
+      @opts[:class]
+    end
+    
+    def could_be_nil?
+      @opts[:nil]
+    end
+    
+    # condition when 'could_be_nil' comes from a different method then the last one:
+    # var1.spouse.name == ''
+    # "var1.spouse" would be the condition that inserted 'could_be_nil?'.
+    def cond
+      @opts[:cond]
+    end
+    
+    # raw result without nil checking:
+    # "var1.spouse.name" instead of "(var1.spouse ? var1.spouse.name : nil)"
+    def raw
+      @opts[:raw] || self.to_s
     end
 
     def <<(typed_string)
       if self.empty?
-        @klass = typed_string.klass
+        @opts = typed_string.opts
         replace(typed_string)
-      elsif @klass.kind_of?(Array)
-        @klass << typed_string.klass
+      elsif klass.kind_of?(Array)
+        klass << typed_string.klass
         replace("#{self}, #{typed_string}")
       else
-        @klass = [@klass, typed_string.klass]
+        @opts[:class] = [klass, typed_string.klass]
         replace("#{self}, #{typed_string}")
       end
-    end
-
-    def safe_method?(signature)
-      @klass.respond_to?(:safe_method?) ? @klass.safe_method?(signature) : nil
     end
   end
 
   class RubyLessProcessor < SexpProcessor
     attr_reader :ruby
 
-    STRONG_PRECEDENCE = [:"<=>", :==, :<, :>, :<=, :>=, :-, :+, :*, :/, :%]
+    INFIX_OPERATOR = [:"<=>", :==, :<, :>, :<=, :>=, :-, :+, :*, :/, :%]
     PREFIX_OPERATOR   = [:"-@"]
 
     def self.translate(string, helper)
@@ -93,6 +120,21 @@ module RubyLess
 
     def process_not(exp)
       t "not #{process(exp.shift)}", Boolean
+    end
+    
+    def process_if(exp)
+      cond      = process(exp.shift)
+      true_res  = process(exp.shift)
+      false_res = process(exp.shift)
+      
+      if true_res && false_res && true_res.klass != false_res.klass
+        raise "Error in conditional expression: '#{true_res}' and '#{false_res}' do not return results of same type (#{true_res.klass} != #{false_res.klass})."
+      end
+      raise "Error in conditional expression." unless true_res || false_res
+      opts = {}
+      opts[:nil] = true_res.nil? || true_res.could_be_nil? || false_res.nil? || false_res.could_be_nil?
+      opts[:class] = true_res ? true_res.klass : false_res.klass
+      t "#{cond} ? #{true_res || 'nil'} : #{false_res || 'nil'}", opts
     end
 
     def process_call(exp)
@@ -123,12 +165,12 @@ module RubyLess
     end
 
     def process_vcall(exp)
-      var_name = exp.shift.to_s
-      var, klass = @helper.variable(var_name)
-      unless var
-        raise "Unknown variable '#{var_name}'."
+      var_name = exp.shift
+      unless opts = get_method([var_name], @helper, false)
+        raise "Unknown variable or method '#{var_name}'."
       end
-      t var, klass
+      method = opts[:method] || var_name.to_s
+      t method, opts
     end
 
     def process_lit(exp)
@@ -148,8 +190,29 @@ module RubyLess
     end
 
     private
-      def t(content, klass = nil)
-        TypedString.new(content, klass)
+      def t(content, opts = nil)
+        if opts.nil?
+          opts = {:class => String}
+        elsif !opts.kind_of?(Hash)
+          opts = {:class => opts}
+        end
+        TypedString.new(content, opts)
+      end
+      
+      def t_if(receiver, true_res, opts)
+        if receiver.could_be_nil?
+          condition = receiver.cond || receiver
+          # we can append to 'raw'
+          if opts[:nil]
+            # applied method could produce a nil value (so we cannot concat method on top of 'raw' and only check previous condition)
+            t "(#{condition} ? #{true_res} : nil)", opts
+          else
+            # we can keep on checking only 'condition' and appending methods to 'raw'
+            t "(#{condition} ? #{true_res} : nil)", opts.merge(:nil => true, :cond => condition, :raw => true_res)
+          end
+        else
+          t true_res, opts
+        end
       end
 
       def method_call(receiver, exp)
@@ -163,19 +226,23 @@ module RubyLess
         end
 
         if receiver
-          raise "'#{receiver}' does not respond to '#{method}(#{args})'." unless klass = (receiver.safe_method?(signature) || @helper.any_safe_method?(signature))
-          if STRONG_PRECEDENCE.include?(method)
-            t "#{receiver}#{method}#{args}", klass
+          raise "'#{receiver}' does not respond to '#{method}(#{args})'." unless opts = get_method(signature, receiver.klass)
+          method = opts[:method] if opts[:method]
+          if method == :/
+            t_if receiver, "(#{receiver.raw}#{method}#{args} rescue nil)", opts.merge(:nil => true)
+          elsif INFIX_OPERATOR.include?(method)
+            t_if receiver, "(#{receiver.raw}#{method}#{args})", opts
           elsif PREFIX_OPERATOR.include?(method)
-            t "#{method.to_s[0..0]}#{receiver}", klass
+            t_if receiver, "#{method.to_s[0..0]}#{receiver.raw}", opts
           else
             args = "(#{args})" if args != []
-            t "#{receiver}.#{method}#{args}", klass
+            t_if receiver, "#{receiver.raw}.#{method}#{args}", opts
           end
         else
-          raise "Unknown method '#{method}(#{args})'." unless klass = @helper.safe_method?(signature)
+          raise "Unknown method '#{method}(#{args})'." unless opts = get_method(signature, @helper, false)
+          method = opts[:method] if opts[:method]
           args = "(#{args})" if args != []
-          t "#{method}#{args}", klass
+          t "#{method}#{args}", opts
         end
       end
 
@@ -196,6 +263,12 @@ module RubyLess
       def escape_str(str, in_regex = false)
         res = str.gsub(/"/, '\"').gsub(/\n/, '\n')
         res.gsub!(/\//, '\/') if in_regex
+        res
+      end
+      
+      def get_method(signature, receiver, is_method = true)
+        res = receiver.respond_to?(:safe_method?) ? receiver.safe_method?(signature) : @helper.class.safe_method_for?(receiver, signature)
+        res = res.call(@helper) if res.kind_of?(Proc)
         res
       end
   end

@@ -1,23 +1,61 @@
 empty:
   src: ""
-  res: null
+  tem: null
 
 numbers:
   src: "id > 45 and (3 > -id or 3+3)"
-  res: "(var1.zip>45 and (3>-var1.zip or 3+3))"
+  tem: "((var1.zip>45) and ((3>-var1.zip) or (3+3)))"
 
 global_method:
   src: "strftime(now, '%Y')"
-  res: "strftime(Time.now, \"%Y\")"
+  tem: "strftime(Time.now, \"%Y\")"
 
 dynamic_string:
   src: "strftime(now, \"#{name}\")"
-  res: "strftime(Time.now, \"#{var1.name}\")"
+  tem: "strftime(Time.now, \"#{var1.name}\")"
 
-method_on_any_object:
-  src: "strftime(now, \"#{name}\").to_i + 45.to_i"
-  res: "strftime(Time.now, \"#{var1.name}\").to_i+45.to_i"
+dynamic_string_again:
+  src: "strftime(now, \"#{name}\")"
+  tem: "strftime(Time.now, \"#{var1.name}\")"
 
 rewrite_variables:
   src: "!prev.ancestor?(main) && !node.ancestor?(main)"
-  res: "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
+  tem: "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
+
+method_can_return_nil:
+  src: "spouse.name"
+  tem: "(var1.spouse ? var1.spouse.name : nil)"
+
+method_on_method_can_return_nil:
+  src: "spouse.name == 'yo'"
+  tem: "(var1.spouse ? (var1.spouse.name==\"yo\") : nil)"
+  res: ""
+
+nil_greater_then:
+  src: "spouse.id > 1"
+  tem: "(var1.spouse ? (var1.spouse.zip>1) : nil)"
+
+nil_ternary_op:
+  src: "spouse ? 'foo' : 'bar'"
+  tem: "var1.spouse ? \"foo\" : \"bar\""
+  res: 'bar'
+
+nested_ternary_op:
+  src: "spouse.name == 'Adam' ? 'man' : 'not a man'"
+  tem: "(var1.spouse ? (var1.spouse.name==\"Adam\") : nil) ? \"man\" : \"not a man\""
+  res: "not a man"
+
+method_on_method:
+  src: "project.name.to_s"
+  tem: "var1.project.name.to_s"
+  res: 'project'
+  
+comp_ternary_op:
+  src: "1 > 2 ? 'foo' : 'bar'"
+  tem: "(1>2) ? \"foo\" : \"bar\""
+  res: "bar"
+  
+method_ternary_op:
+  src: "id > 2 ? 'foo' : 'bar'"
+  tem: "(var1.zip>2) ? \"foo\" : \"bar\""
+  res: "foo"

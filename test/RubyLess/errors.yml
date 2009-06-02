@@ -5,3 +5,12 @@ unknown_global_method:
 bad_argument_types:
   src: "strftime(34,'ffoo')"
   res: "Unknown method 'strftime(34, \"ffoo\")'."
+
+zero_div:
+  src: "1/(id-10)"
+  tem: "(1/(var1.zip-10) rescue nil)"
+  res: ""
+  
+no_looping:
+  src: "while(true) do puts 'flood' end"
+  res: 'Bug! Unknown node-type :while to RubyLess::RubyLessProcessor'

@@ -1,6 +1,6 @@
 = RubyLess
 
-* http://github.com/zena/rubyless/tree/master
+* http://zenadmin.org/546
 
 == DESCRIPTION:
 
@@ -15,46 +15,29 @@ This library is heavily based on Ruby2Ruby by Ryan Davis, thanks to him for shar
 
 == SYNOPSIS:
   
-For every class that will be involved in your RubyLess scripts, you need to provide a 'safe_method?' class method in case
-you want to enable methods from this class. If you want to enable methods on any class like 'to_i', you can add these to
-your helper's 'any_safe_method?' method.
+For every class that will be involved in your RubyLess scripts, you need to declare safe methods with the 'safe_method' macro if
+you want to enable methods from this class. You have to specify the return type of the method. If you have some methods that
+return 'nil' instead of the declared output, you need to wrap your final ruby 'eval' with a rescue clause.
 
  # signature is made of [method, arg_class, arg_class, ...]
  class Node
-   def self.safe_method?(signature)
-     {
-       [:ancestor?, Node] => Boolean,
-     }[signature]
-   end
+   include RubyLess::SafeClass
+   safe_method [:ancestor?, Node] => RubyLess::Boolean
  end
  
  # methods defined in helper
  
  # global methods
- def safe_method?(signature)
-   {
-     [:strftime, Time, String] => String,
-   }[signature]
- end
- 
- # methods allowed on any object
- def any_safe_method?(signature)
-   {
-     [:to_i] => Number,
-     [:to_s] => String,
-   }[signature]
- end
- 
- # allowed variable names with type and rewriting
- def variable(name)
-   { 'prev' => ['@node.prev', Node],
-     'main' => ['@node', Node],
-     'node' => [context[:node], context[:node_class]],
-     'id'   => ["#{context[:node]}.zip", Number],
-     'now'  => ["Time.now", Time],
-     'name' => ["#{context[:node]}.name", String],
-   }[name]
- end
+ include RubyLess::SafeClass
+ safe_method :prev => {:class => Dummy, :method => 'previous', :nil => true}
+ safe_method :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
+ safe_method [:strftime, Time, String] => String
+ safe_method_for String, [:==, String] => RubyLess::Boolean
+ safe_method_for String, [:to_s] => String
+
+You can also redefine 'safe_method?' for any class or for the main helper in order to do some more complicated renaming. Note
+also that you should add ':nil => true' declaration to any method that could return a nil value so that RubyLess can render
+code that will not break during runtime (adding nil checking in the form of "foo ? foo.name : nil").
 
 You can now parse some ruby code:
 
@@ -62,11 +45,15 @@ You can now parse some ruby code:
  => "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
  
  RubyLess.translate("id > 45 and (3 > -id or 3+3)", self)
- => "(var1.zip>45 and (3>-var1.zip or 3+3))"
+ => "(var1.zip>45 and ((3>-var1.zip) or (3+3)))"
  
  RubyLess.translate("strftime(now, '%Y')", self)
  => "strftime(Time.now, \"%Y\")"
-  
+
+Since most of the code in SafeClass is string evaluated (to scope class variables), there is not much to parse for rdoc. You
+can look at the tests for an idea of how to declare things. If you have more questions, ask on zena's mailing list:
+
+http://zenadmin.org/community
   
 == REQUIREMENTS:
 
