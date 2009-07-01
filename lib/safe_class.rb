@@ -30,7 +30,9 @@ module RubyLess
     def self.included(base)
       base.class_eval do
         
-        # Declare a safe method through a hash of either
+        # Declare safe methods. By providing
+        #
+        # The methods hash has the following format:
         #  signature => return type
         # or
         #  signature => options
@@ -42,16 +44,28 @@ module RubyLess
         # The signature can be either a single symbol or an array containing the method name and type arguments like:
         #  [:strftime, Time, String]
         #
+        # If the signature is :defaults, the options defined are used as defaults for the other elements defined in the
+        # same call.
+        #
         # The return type can be a string with the class name or a class.
         #
         # Options are:
         # :class  the return type (class name)
         # :nil    set this to true if the method could return nil
         def self.safe_method(hash)
+          methods_hash = hash
+          defaults = methods_hash.delete(:defaults) || {}
+            
           list = (@@_safe_methods[self] ||= {})
-          hash.each do |k,v|
+          methods_hash.each do |k,v|
             k = [k] unless k.kind_of?(Array)
-            v = {:class => v} unless v.kind_of?(Hash) || v.kind_of?(Proc)
+            if v.kind_of?(Hash)
+              v = defaults.merge(v)
+            elsif v.kind_of?(Proc)
+              # cannot merge defaults
+            else
+              v = defaults.merge(:class => v)
+            end
             list[k] = v
           end
         end
@@ -65,7 +79,7 @@ module RubyLess
               opts = {}
               opts[:nil]   = col.default.nil?
               if col.number?
-                opts[:class] = RubyLess::Number
+                opts[:class] = Number
               elsif col.text?
                 opts[:class] = String
               elsif att.to_s =~ /_at$/

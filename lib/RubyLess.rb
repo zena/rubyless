@@ -6,7 +6,7 @@ require 'processor'
 =begin rdoc
 =end
 module RubyLess
-  VERSION = '0.2.0'
+  VERSION = '0.2.1'
   
   def self.translate(string, helper)
     RubyLessProcessor.translate(string, helper)

@@ -4,14 +4,15 @@ class Dummy < RubyLess::ActiveRecordMock
   attr_reader :name
   include RubyLess::SafeClass
   
-  safe_method [:ancestor?, Dummy]  => RubyLess::Boolean
-  safe_method :parent              => {:class => 'Dummy', :special_option => 'foobar'},
-              :children            => ['Dummy'],
-              :project             => 'Dummy',
-              :spouse              => {:class => 'Dummy', :nil => true},
-              :husband             => {:class => 'Dummy', :nil => true},
-              :id                  => {:class => RubyLess::Number, :method => :zip},
-              :name                => String
+  safe_method  [:ancestor?, Dummy]  => Boolean
+  safe_method  :parent              => {:class => 'Dummy', :special_option => 'foobar'},
+               :children            => ['Dummy'],
+               :project             => 'Dummy',
+               :id                  => {:class => Number, :method => :zip},
+               :name                => String
+  safe_method  :defaults => {:nil => true},
+               :spouse        => 'Dummy',
+               :husband       => {:class => 'Dummy'}
              
   safe_attribute :age, :friend_id, :log_at, :format
   

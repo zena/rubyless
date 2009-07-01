@@ -18,6 +18,14 @@ dynamic_string_again:
   src: "now.strftime(\"#{name}\")"
   tem: "Time.now.strftime(\"#{var1.name}\")"
 
+symbol:
+  src: ":foobar"
+  sxp: '[:lit, :foobar]'
+
+hash_access:
+  src: "dictionary[:key]"
+  tem: "get_dict[:key]"
+
 rewrite_variables:
   src: "!prev.ancestor?(main) && !node.ancestor?(main)"
   tem: "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"

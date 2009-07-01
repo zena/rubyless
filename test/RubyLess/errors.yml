@@ -17,4 +17,16 @@ looping:
 
 add_two_strings:
   src: "name + 14"
-  res: "'var1.name' does not respond to '+(14)'."
+  res: "'var1.name' does not respond to '+(Number)'."
+
+two_arguments_in_hash:
+  src: "dictionary[:one, :two]"
+  res: "'get_dict' does not respond to '[](Symbol, Symbol)'."
+
+number_argument:
+  src: "dictionary[43]"
+  res: "'get_dict' does not respond to '[](Number)'."
+
+string_argument:
+  src: "dictionary[spouse.name]"
+  res: "'get_dict' does not respond to '[](String)'."

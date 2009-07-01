@@ -90,7 +90,8 @@ module RubyLess
     end
 
     def process_lit(exp)
-      t exp.shift.to_s, Number
+      lit = exp.shift
+      t lit.inspect, lit.class == Symbol ? Symbol : Number
     end
 
     def process_str(exp)
@@ -153,7 +154,7 @@ module RubyLess
           if receiver.could_be_nil?
             cond += receiver.cond
           end
-          raise "'#{receiver}' does not respond to '#{method}(#{args.raw})'." unless opts = get_method(signature, receiver.klass)
+          raise "'#{receiver}' does not respond to '#{method}(#{signature[1..-1].join(', ')})'." unless opts = get_method(signature, receiver.klass)
           method = opts[:method] if opts[:method]
           if method == :/
             t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
@@ -161,6 +162,8 @@ module RubyLess
             t_if cond, "(#{receiver.raw}#{method}#{args.raw})", opts
           elsif PREFIX_OPERATOR.include?(method)
             t_if cond, "#{method.to_s[0..0]}#{receiver.raw}", opts
+          elsif method == :[]
+            t_if cond, "#{receiver.raw}[#{args.raw}]", opts
           else
             args = "(#{args.raw})" if args != []
             t_if cond, "#{receiver.raw}.#{method}#{args}", opts

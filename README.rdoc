@@ -22,7 +22,7 @@ return 'nil' instead of the declared output, you need to wrap your final ruby 'e
  # signature is made of [method, arg_class, arg_class, ...]
  class Node
    include RubyLess::SafeClass
-   safe_method [:ancestor?, Node] => RubyLess::Boolean
+   safe_method [:ancestor?, Node] => Boolean
  end
  
  # methods defined in helper
@@ -32,7 +32,7 @@ return 'nil' instead of the declared output, you need to wrap your final ruby 'e
  safe_method :prev => {:class => Dummy, :method => 'previous', :nil => true}
  safe_method :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
  safe_method [:strftime, Time, String] => String
- safe_method_for String, [:==, String] => RubyLess::Boolean
+ safe_method_for String, [:==, String] => Boolean
  safe_method_for String, [:to_s] => String
 
 You can also redefine 'safe_method_type' for any class or for the main helper in order to do some more complicated renaming. Note
