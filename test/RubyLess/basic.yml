@@ -20,7 +20,7 @@ dynamic_string_again:
 
 symbol:
   src: ":foobar"
-  sxp: '[:lit, :foobar]'
+  sxp: 's(:lit, :foobar)'
 
 hash_access:
   src: "dictionary[:key]"
@@ -57,12 +57,12 @@ method_on_method:
   src: "project.name.to_s"
   tem: "var1.project.name.to_s"
   res: 'project'
-  
+
 comp_ternary_op:
   src: "1 > 2 ? 'foo' : 'bar'"
   tem: "(1>2) ? \"foo\" : \"bar\""
   res: "bar"
-  
+
 method_ternary_op:
   src: "id > 2 ? 'foo' : 'bar'"
   tem: "(var1.zip>2) ? \"foo\" : \"bar\""
@@ -71,15 +71,15 @@ method_ternary_op:
 method_argument_can_be_nil:
   src: "vowel_count(spouse.name)"
   tem: "(var1.spouse ? vowel_count(var1.spouse.name) : nil)"
-  
+
 multi_arg_method_argument_can_be_nil:
   src: "log_info(spouse, 'foobar')"
   tem: "(var1.spouse ? log_info(var1.spouse, \"foobar\") : nil)"
-  
+
 multi_arg_method_arguments_can_be_nil:
   src: "log_info(husband, spouse.name)"
   tem: "((var1.husband && var1.spouse) ? log_info(var1.husband, var1.spouse.name) : nil)"
-  
+
 multi_arg_method_arguments_can_be_nil_same_condition:
   src: "log_info(spouse, spouse.name)"
   tem: "(var1.spouse ? log_info(var1.spouse, var1.spouse.name) : nil)"

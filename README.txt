@@ -5,16 +5,19 @@
 == DESCRIPTION:
 
 RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked
-ruby, eventually rewriting some variables or methods. The goals:
+ruby, eventually rewriting some variables or methods.
+
+
+== GOALS:
 
  1. give ruby scripting access to users without any security risk
  2. rewrite variable names depending on compilation context
- 3. never raise runtime errors through compile time type checking and powerful nil handling 
+ 3. never raise runtime errors through compile time type checking and powerful nil handling
 
 This library is based on Ruby2Ruby by Ryan Davis, thanks to him for sharing his work.
 
 == SYNOPSIS:
-  
+
 For every class that will be involved in your RubyLess scripts, you need to declare safe methods with the 'safe_method' macro if
 you want to enable methods from this class. You have to specify the return type of the method. If you have some methods that
 return 'nil' instead of the declared output, you need to wrap your final ruby 'eval' with a rescue clause.
@@ -24,9 +27,9 @@ return 'nil' instead of the declared output, you need to wrap your final ruby 'e
    include RubyLess::SafeClass
    safe_method [:ancestor?, Node] => Boolean
  end
- 
+
  # methods defined in helper
- 
+
  # global methods
  include RubyLess::SafeClass
  safe_method :prev => {:class => Dummy, :method => 'previous', :nil => true}
@@ -48,20 +51,20 @@ You can now parse some ruby code:
 
  RubyLess.translate("!prev.ancestor?(main) && !node.ancestor?(main)", self)
  => "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
- 
+
  RubyLess.translate("id > 45 and (3 > -id or 3+3)", self)
  => "(var1.zip>45 and ((3>-var1.zip) or (3+3)))"
- 
+
  RubyLess.translate("strftime(now, '%Y')", self)
  => "strftime(Time.now, \"%Y\")"
- 
+
  RubyLess.translate("log_info(spouse, spouse.name)", self)
  => "(var1.spouse ? log_info(var1.spouse, var1.spouse.name) : nil)"
 
 You can look at the tests for an idea of how to declare things. If you have more questions, ask on zena's mailing list:
 
 http://zenadmin.org/community
-  
+
 == REQUIREMENTS:
 
 * parse_tree

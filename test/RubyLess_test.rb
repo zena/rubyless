@@ -21,7 +21,7 @@ class SimpleHelper < Test::Unit::TestCase
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
   safe_method_for Time, [:strftime, String] => String
-  
+
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
     unless res = self.class.safe_method_type(signature)
@@ -33,26 +33,26 @@ class SimpleHelper < Test::Unit::TestCase
     end
     res
   end
-  
+
   def var1
     Dummy.new
   end
-  
+
   def vowel_count(str)
     str.tr('^aeiouy', '').size
   end
-  
+
   def log_info(obj, msg)
     "[#{obj.name}] #{msg}"
   end
-  
+
   def yt_do_test(file, test, context = yt_get('context',file,test))
     @@test_strings[file][test].keys.each do |key|
       next if ['src', 'context'].include?(key)
       yt_assert yt_get(key,file,test), parse(key, file, test, context)
     end
   end
-  
+
   def parse(key, file, test, opts)
     @context = {:node => 'var1', :node_class => Dummy}
     source = yt_get('src', file, test)
@@ -62,7 +62,7 @@ class SimpleHelper < Test::Unit::TestCase
     when 'res'
       eval(source ? RubyLess.translate(source, self) : yt_get('tem', file, test)).to_s
     when 'sxp'
-      ParseTree.translate(source).inspect
+      RubyParser.new.parse(source).inspect
     else
       "Unknown key '#{key}'. Should be 'tem' or 'res'."
     end
@@ -71,6 +71,6 @@ class SimpleHelper < Test::Unit::TestCase
     # puts err.backtrace
     err.message
   end
-  
+
   yt_make
 end

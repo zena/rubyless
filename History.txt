@@ -1,3 +1,11 @@
+== 0.3.0 2009-10-03
+
+* 1 major enhancement
+  * Moved from ParseTree to RubyParser
+
+* 1 minor enhancement:
+  * Using Mr Bones to generate gems
+
 == 0.2.1 2009-07-01
 
 * 2 minor enhancements:

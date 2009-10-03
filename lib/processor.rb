@@ -1,11 +1,14 @@
 require 'rubygems'
-require 'parse_tree'
+require 'ruby_parser'
+require 'sexp_processor'
 
 require 'basic_types'
 require 'typed_string'
 require 'safe_class'
+require 'ruby-debug'
+Debugger.start
 
-module RubyLess  
+module RubyLess
   class RubyLessProcessor < SexpProcessor
     attr_reader :ruby
 
@@ -13,18 +16,24 @@ module RubyLess
     PREFIX_OPERATOR   = [:"-@"]
 
     def self.translate(string, helper)
-      sexp = ParseTree.translate(string)
+      sexp = RubyParser.new.parse(string)
       self.new(helper).process(sexp)
     end
 
     def initialize(helper)
       super()
-      @helper     = helper
-      @indent     = "  "
+      @helper = helper
+      @indent = "  "
       self.auto_shift_type = true
       self.strict = true
       self.expected = TypedString
     end
+
+    #def process(exp)
+    #  return nil if exp.nil?
+    #  method = exp.shift
+    #  send("process_#{method}", exp)
+    #end
 
     def process_and(exp)
       t "(#{process(exp.shift)} and #{process(exp.shift)})", Boolean
@@ -37,12 +46,12 @@ module RubyLess
     def process_not(exp)
       t "not #{process(exp.shift)}", Boolean
     end
-    
+
     def process_if(exp)
       cond      = process(exp.shift)
       true_res  = process(exp.shift)
       false_res = process(exp.shift)
-      
+
       if true_res && false_res && true_res.klass != false_res.klass
         raise "Error in conditional expression: '#{true_res}' and '#{false_res}' do not return results of same type (#{true_res.klass} != #{false_res.klass})."
       end
@@ -115,7 +124,7 @@ module RubyLess
         end
         TypedString.new(content, opts)
       end
-      
+
       def t_if(cond, true_res, opts)
         if cond != []
           if cond.size > 1
@@ -123,7 +132,7 @@ module RubyLess
           else
             condition = cond.join('')
           end
-          
+
           # we can append to 'raw'
           if opts[:nil]
             # applied method could produce a nil value (so we cannot concat method on top of 'raw' and only check previous condition)
@@ -139,9 +148,14 @@ module RubyLess
 
       def method_call(receiver, exp)
         method = exp.shift
-        if args = exp.shift rescue nil
-          args = process args || []
-          signature = [method] + [args.klass].flatten ## FIXME: error prone !
+        arg_sexp = args = exp.shift # rescue nil
+        if arg_sexp
+          args = process(arg_sexp)
+          if args == ''
+            signature = [method]
+          else
+            signature = [method] + [args.klass].flatten
+          end
           # execution conditional
           cond = args.cond || []
         else
@@ -149,7 +163,7 @@ module RubyLess
           signature = [method]
           cond = []
         end
-        
+
         if receiver
           if receiver.could_be_nil?
             cond += receiver.cond
@@ -165,13 +179,13 @@ module RubyLess
           elsif method == :[]
             t_if cond, "#{receiver.raw}[#{args.raw}]", opts
           else
-            args = "(#{args.raw})" if args != []
+            args = "(#{args.raw})" if args != ''
             t_if cond, "#{receiver.raw}.#{method}#{args}", opts
           end
         else
           raise "Unknown method '#{method}(#{args.raw})'." unless opts = get_method(signature, @helper, false)
           method = opts[:method] if opts[:method]
-          args = "(#{args.raw})" if args != []
+          args = "(#{args.raw})" if args != ''
           t_if cond, "#{method}#{args}", opts
         end
       end
@@ -195,7 +209,7 @@ module RubyLess
         res.gsub!(/\//, '\/') if in_regex
         res
       end
-      
+
       def get_method(signature, receiver, is_method = true)
         res = receiver.respond_to?(:safe_method_type) ? receiver.safe_method_type(signature) : SafeClass.safe_method_type_for(receiver, signature)
         res = res.call(@helper) if res.kind_of?(Proc)
