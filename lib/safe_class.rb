@@ -2,12 +2,12 @@ module RubyLess
   module SafeClass
     @@_safe_methods     ||= {} # defined for each class
     @@_safe_methods_all ||= {} # full list with inherited attributes
-    
+
     # List of safe methods for a specific class.
     def self.safe_methods_for(klass)
       @@_safe_methods_all[klass] ||= build_safe_methods_list(klass)
     end
-    
+
     # Return method type (options) if the given signature is a safe method for the class.
     def self.safe_method_type_for(klass, signature)
       if res = safe_methods_for(klass)[signature]
@@ -16,20 +16,21 @@ module RubyLess
         nil
       end
     end
-    
+
     # Declare a safe method for a given class
     def self.safe_method_for(klass, hash)
       list = (@@_safe_methods[klass] ||= {})
       hash.each do |k,v|
         k = [k] unless k.kind_of?(Array)
         v = {:class => v} unless v.kind_of?(Hash) || v.kind_of?(Proc)
+        v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
         list[k] = v
       end
     end
-    
+
     def self.included(base)
       base.class_eval do
-        
+
         # Declare safe methods. By providing
         #
         # The methods hash has the following format:
@@ -55,21 +56,22 @@ module RubyLess
         def self.safe_method(hash)
           methods_hash = hash
           defaults = methods_hash.delete(:defaults) || {}
-            
+
           list = (@@_safe_methods[self] ||= {})
           methods_hash.each do |k,v|
             k = [k] unless k.kind_of?(Array)
             if v.kind_of?(Hash)
               v = defaults.merge(v)
+              v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
             elsif v.kind_of?(Proc)
               # cannot merge defaults
             else
-              v = defaults.merge(:class => v)
+              v = defaults.merge(:class => v, :method => k.first.to_s)
             end
             list[k] = v
           end
         end
-        
+
         # Declare a safe method to access a list of attributes.
         # This method should only be used when the class is linked with a database table and provides
         # proper introspection to detect types and the possibility of NULL values.
@@ -93,34 +95,34 @@ module RubyLess
             end
           end
         end
-        
+
         # Declare a safe method for a given class
         def self.safe_method_for(klass, signature)
           SafeClass.safe_method_for(klass, signature)
         end
-        
+
         # Hash of all safe methods defined for the class.
         def self.safe_methods
           SafeClass.safe_methods_for(self)
         end
-        
+
         # Return true if the given signature corresponds to a safe method for the class.
         def self.safe_method_type(signature)
           if res = SafeClass.safe_method_type_for(self, signature)
-            res.dup
+            res.dup # TODO: replace by freeze
           else
             nil
           end
         end
-        
+
         # Return the method type (options) if the given signature is a safe method for the class.
         def safe_method_type(signature)
           self.class.safe_method_type(signature)
         end
       end  # base.class_eval
     end  # included
-  
-    private   
+
+    private
       def self.build_safe_methods_list(klass)
         list = klass.superclass.respond_to?(:safe_methods) ? klass.superclass.safe_methods : {}
         (@@_safe_methods[klass] || {}).map do |signature, return_value|
@@ -134,7 +136,7 @@ module RubyLess
         end
         list
       end
-      
+
       def self.parse_class(klass)
         if klass.kind_of?(Array)
           if klass[0].kind_of?(String)

@@ -12,8 +12,8 @@ module RubyLess
   class RubyLessProcessor < SexpProcessor
     attr_reader :ruby
 
-    INFIX_OPERATOR = [:"<=>", :==, :<, :>, :<=, :>=, :-, :+, :*, :/, :%]
-    PREFIX_OPERATOR   = [:"-@"]
+    INFIX_OPERATOR = ['<=>', '==', '<', '>', '<=', '>=', '-', '+', '*', '/', '%']
+    PREFIX_OPERATOR   = ['-@']
 
     def self.translate(string, helper)
       sexp = RubyParser.new.parse(string)
@@ -94,7 +94,7 @@ module RubyLess
       unless opts = get_method([var_name], @helper, false)
         raise "Unknown variable or method '#{var_name}'."
       end
-      method = opts[:method] || var_name.to_s
+      method = opts[:method]
       t method, opts
     end
 
@@ -169,14 +169,14 @@ module RubyLess
             cond += receiver.cond
           end
           raise "'#{receiver}' does not respond to '#{method}(#{signature[1..-1].join(', ')})'." unless opts = get_method(signature, receiver.klass)
-          method = opts[:method] if opts[:method]
-          if method == :/
+          method = opts[:method]
+          if method == '/'
             t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
           elsif INFIX_OPERATOR.include?(method)
             t_if cond, "(#{receiver.raw}#{method}#{args.raw})", opts
           elsif PREFIX_OPERATOR.include?(method)
             t_if cond, "#{method.to_s[0..0]}#{receiver.raw}", opts
-          elsif method == :[]
+          elsif method == '[]'
             t_if cond, "#{receiver.raw}[#{args.raw}]", opts
           else
             args = "(#{args.raw})" if args != ''
@@ -184,7 +184,7 @@ module RubyLess
           end
         else
           raise "Unknown method '#{method}(#{args.raw})'." unless opts = get_method(signature, @helper, false)
-          method = opts[:method] if opts[:method]
+          method = opts[:method]
           args = "(#{args.raw})" if args != ''
           t_if cond, "#{method}#{args}", opts
         end
