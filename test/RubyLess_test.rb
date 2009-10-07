@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 class StringDictionary
   include RubyLess::SafeClass
-  safe_method [:[], Symbol] => {:class => String, :nil => true}
+  safe_method ['[]', Symbol] => {:class => String, :nil => true}
 end
 
 class SimpleHelper < Test::Unit::TestCase
@@ -15,7 +15,7 @@ class SimpleHelper < Test::Unit::TestCase
   safe_method :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
   safe_method :now   => {:class => Time,  :method => "Time.now"}
   safe_method :birth => {:class => Time, :method => "Date.parse('2009-06-02 18:44')"}
-  safe_method :dictionary => {:class => StringDictionary, :method => 'get_dict'}
+  safe_method 'dictionary' => {:class => StringDictionary, :method => 'get_dict'}
   safe_method [:vowel_count, String]    => Number
   safe_method [:log_info, Dummy, String]    => String
   safe_method_for String, [:==, String] => Boolean
@@ -60,6 +60,7 @@ class SimpleHelper < Test::Unit::TestCase
     when 'tem'
       source ? RubyLess.translate(source, self) : yt_get('tem', file, test)
     when 'res'
+      res = RubyLess.translate(source, self)
       eval(source ? RubyLess.translate(source, self) : yt_get('tem', file, test)).to_s
     when 'sxp'
       RubyParser.new.parse(source).inspect

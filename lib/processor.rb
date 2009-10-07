@@ -147,7 +147,7 @@ module RubyLess
       end
 
       def method_call(receiver, exp)
-        method = exp.shift
+        method = exp.shift.to_s
         arg_sexp = args = exp.shift # rescue nil
         if arg_sexp
           args = process(arg_sexp)

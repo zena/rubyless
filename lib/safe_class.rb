@@ -22,6 +22,7 @@ module RubyLess
       list = (@@_safe_methods[klass] ||= {})
       hash.each do |k,v|
         k = [k] unless k.kind_of?(Array)
+        k[0] = k[0].to_s
         v = {:class => v} unless v.kind_of?(Hash) || v.kind_of?(Proc)
         v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
         list[k] = v
@@ -60,6 +61,7 @@ module RubyLess
           list = (@@_safe_methods[self] ||= {})
           methods_hash.each do |k,v|
             k = [k] unless k.kind_of?(Array)
+            k[0] = k[0].to_s
             if v.kind_of?(Hash)
               v = defaults.merge(v)
               v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
@@ -131,7 +133,8 @@ module RubyLess
           elsif !return_value.kind_of?(Proc)
             return_value = {:class => return_value}
           end
-          signature.map! {|e| parse_class(e)}
+          method = signature.shift
+          signature = [method] + signature.map {|e| parse_class(e)}
           list[signature] = return_value
         end
         list
