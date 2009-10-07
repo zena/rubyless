@@ -86,10 +86,8 @@ module RubyLess
                 opts[:class] = Number
               elsif col.text?
                 opts[:class] = String
-              elsif att.to_s =~ /_at$/
-                opts[:class] = Time
               else
-                raise "Could not declare safe_method for '#{att}': could not guess return type"
+                opts[:class] = col.klass
               end
               safe_method att.to_sym => opts
             else
@@ -123,6 +121,13 @@ module RubyLess
         end
       end  # base.class_eval
     end  # included
+
+    # Safe attribute reader used when 'safe_readable?' could not be called because the class
+    # is not known during compile time.
+    def safe_read(key)
+      return "'#{key}' not readable" unless type = self.class.safe_method_type([key])
+      self.send(type[:method])
+    end
 
     private
       def self.build_safe_methods_list(klass)

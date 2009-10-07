@@ -1,8 +1,12 @@
 == 0.3.1 2009-10-07
 
-* 1 major enhancement
+* 3 major enhancements
   * method name in signatures should always be a string
   * type[:method] is always set and is always a string
+  * fixed how class type is guessed from ActiveRecord column
+
+* 1 minor enhancement
+  * added 'safe_read' method to objects
 
 == 0.3.1 2009-10-03
 

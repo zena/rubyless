@@ -46,6 +46,11 @@ class SimpleHelper < Test::Unit::TestCase
     "[#{obj.name}] #{msg}"
   end
 
+  def test_safe_read
+    assert_equal 10, Dummy.new.safe_read('id')
+    assert_equal "'rm' not readable", Dummy.new.safe_read('rm')
+  end
+
   def yt_do_test(file, test, context = yt_get('context',file,test))
     @@test_strings[file][test].keys.each do |key|
       next if ['src', 'context'].include?(key)
