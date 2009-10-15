@@ -1,3 +1,8 @@
+== 0.3.2 2009-10-15
+
+* 1 minor enhancement
+  * removed 'ruby-debug' require
+
 == 0.3.1 2009-10-07
 
 * 3 major enhancements

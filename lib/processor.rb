@@ -5,8 +5,6 @@ require 'sexp_processor'
 require 'basic_types'
 require 'typed_string'
 require 'safe_class'
-require 'ruby-debug'
-Debugger.start
 
 module RubyLess
   class RubyLessProcessor < SexpProcessor
