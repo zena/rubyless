@@ -12,26 +12,31 @@ class SimpleHelper < Test::Unit::TestCase
   include RubyLess::SafeClass
   safe_method :prev => {:class => Dummy, :method => 'previous'}
   safe_method :main => {:class => Dummy, :method => '@node'}
-  safe_method :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
+  safe_method :node => lambda {|h, s| {:class => h.context[:node_class], :method => h.context[:node]}}
   safe_method :now   => {:class => Time,  :method => "Time.now"}
   safe_method :birth => {:class => Time, :method => "Date.parse('2009-06-02 18:44')"}
   safe_method 'dictionary' => {:class => StringDictionary, :method => 'get_dict'}
   safe_method [:vowel_count, String]    => Number
   safe_method [:log_info, Dummy, String]    => String
+  safe_method :foo => :contextual_method, :bar => :contextual_method
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
   safe_method_for Time, [:strftime, String] => String
 
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
-    unless res = self.class.safe_method_type(signature)
+    unless res = super
       # try to execute method in the current var "var.method"
       if res = context[:node_class].safe_method_type(signature)
-        res = res.call(self) if res.kind_of?(Proc)
-        res[:method] = "#{context[:node]}.#{res[:method] || signature[0]}"
+        res = res.call(self, signature) if res.kind_of?(Proc)
+        res = res.merge(:method => "#{context[:node]}.#{res[:method] || signature[0]}")
       end
     end
     res
+  end
+
+  def contextual_method(signature)
+    {:method => "contextual_#{signature[0]}", :class => String}
   end
 
   def var1
@@ -75,7 +80,7 @@ class SimpleHelper < Test::Unit::TestCase
   rescue => err
     # puts "\n\n#{err.message}"
     # puts err.backtrace
-    err.message
+   err.message
   end
 
   yt_make

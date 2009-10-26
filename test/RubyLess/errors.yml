@@ -10,7 +10,7 @@ zero_div:
   src: "1/(id-10)"
   tem: "(1/(var1.zip-10) rescue nil)"
   res: ""
-  
+
 looping:
   src: "while(true) do puts 'flood' end"
   res: 'Bug! Unknown node-type :while to RubyLess::RubyLessProcessor'
@@ -30,3 +30,7 @@ number_argument:
 string_argument:
   src: "dictionary[spouse.name]"
   res: "'get_dict' does not respond to '[](String)'."
+
+symbol_type_not_used_out_of_helper:
+  src: "node.foo"
+  res: "'var1' does not respond to 'foo()'."

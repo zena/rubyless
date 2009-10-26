@@ -87,3 +87,7 @@ multi_arg_method_arguments_can_be_nil_same_condition:
 literal_argument_for_method:
   src: "vowel_count('ruby')"
   res: "2"
+
+safe_method_defined_as_symbol:
+  src: "foo"
+  tem: "contextual_foo"

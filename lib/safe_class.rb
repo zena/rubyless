@@ -10,11 +10,7 @@ module RubyLess
 
     # Return method type (options) if the given signature is a safe method for the class.
     def self.safe_method_type_for(klass, signature)
-      if res = safe_methods_for(klass)[signature]
-        res.dup
-      else
-        nil
-      end
+      safe_methods_for(klass)[signature]
     end
 
     # Declare a safe method for a given class
@@ -65,7 +61,7 @@ module RubyLess
             if v.kind_of?(Hash)
               v = defaults.merge(v)
               v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
-            elsif v.kind_of?(Proc)
+            elsif v.kind_of?(Proc) || v.kind_of?(Symbol)
               # cannot merge defaults
             else
               v = defaults.merge(:class => v, :method => k.first.to_s)
@@ -106,21 +102,20 @@ module RubyLess
           SafeClass.safe_methods_for(self)
         end
 
-        # Return true if the given signature corresponds to a safe method for the class.
+        # Return the type if the given signature corresponds to a safe method for the class.
         def self.safe_method_type(signature)
-          if res = SafeClass.safe_method_type_for(self, signature)
-            res.dup # TODO: replace by freeze
-          else
-            nil
-          end
-        end
-
-        # Return the method type (options) if the given signature is a safe method for the class.
-        def safe_method_type(signature)
-          self.class.safe_method_type(signature)
+          SafeClass.safe_method_type_for(self, signature)
         end
       end  # base.class_eval
     end  # included
+
+
+    # Return the type if the given signature corresponds to a safe method for the object's class.
+    def safe_method_type(signature)
+      if type = self.class.safe_method_type(signature)
+        type.kind_of?(Symbol) ? self.send(type, signature) : type
+      end
+    end
 
     # Safe attribute reader used when 'safe_readable?' could not be called because the class
     # is not known during compile time.
@@ -135,12 +130,14 @@ module RubyLess
         (@@_safe_methods[klass] || {}).map do |signature, return_value|
           if return_value.kind_of?(Hash)
             return_value[:class] = parse_class(return_value[:class])
-          elsif !return_value.kind_of?(Proc)
+          elsif return_value.kind_of?(Proc) || return_value.kind_of?(Symbol)
+            # keep
+          else
             return_value = {:class => return_value}
           end
           method = signature.shift
           signature = [method] + signature.map {|e| parse_class(e)}
-          list[signature] = return_value
+          list[signature] = return_value.freeze
         end
         list
       end

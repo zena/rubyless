@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rubyless}
-  s.version = "0.3.1"
+  s.version = "0.3.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gaspard Bucher"]
-  s.date = %q{2009-10-03}
+  s.date = %q{2009-10-26}
   s.description = %q{RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked
 ruby, eventually rewriting some variables or methods.}
   s.email = %q{gaspard@teti.ch}

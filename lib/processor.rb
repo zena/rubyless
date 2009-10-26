@@ -210,8 +210,8 @@ module RubyLess
 
       def get_method(signature, receiver, is_method = true)
         res = receiver.respond_to?(:safe_method_type) ? receiver.safe_method_type(signature) : SafeClass.safe_method_type_for(receiver, signature)
-        res = res.call(@helper) if res.kind_of?(Proc)
-        res
+        res = res.call(@helper, signature) if res.kind_of?(Proc)
+        res.kind_of?(Symbol) ? nil : res # Symbols not allowed here (should be resolved in receiver.safe_method_type)
       end
   end
 end
