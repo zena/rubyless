@@ -50,8 +50,7 @@ module RubyLess
         # Options are:
         # :class  the return type (class name)
         # :nil    set this to true if the method could return nil
-        def self.safe_method(hash)
-          methods_hash = hash
+        def self.safe_method(methods_hash)
           defaults = methods_hash.delete(:defaults) || {}
 
           list = (@@_safe_methods[self] ||= {})
@@ -68,6 +67,15 @@ module RubyLess
             end
             list[k] = v
           end
+        end
+
+        # A safe context is simply a safe method that can return nil in some situations. The rest of the
+        # syntax is the same as #safe_method. We call it a safe context because it enables syntaxes such
+        # as: if var = my_context(...) ---> enter context.
+        def self.safe_context(methods_hash)
+          methods_hash[:defaults] ||= {}
+          methods_hash[:defaults][:nil] = true
+          safe_method(methods_hash)
         end
 
         # Declare a safe method to access a list of attributes.
