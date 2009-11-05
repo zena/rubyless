@@ -12,7 +12,7 @@ class Dummy < RubyLess::ActiveRecordMock
                :name                => String,
                :foo                 => :bar
   safe_context :spouse  => 'Dummy',
-               :husband => {:class => 'Dummy'}
+               :husband => {:class => 'Dummy', :context => {:clever => 'no'}}
 
   safe_attribute :age, :friend_id, :log_at, :format
 

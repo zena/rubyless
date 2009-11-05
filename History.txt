@@ -1,3 +1,8 @@
+== 0.3.5
+
+* 1 minor enhancement
+  * added 'disable_safe_read' method
+
 == 0.3.4 2009-11-05
 
 * 1 minor enhancement

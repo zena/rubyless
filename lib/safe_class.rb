@@ -114,6 +114,17 @@ module RubyLess
         def self.safe_method_type(signature)
           SafeClass.safe_method_type_for(self, signature)
         end
+
+        # Return true if the class is safe (we can call safe_read on its instances)
+        def self.safe_class?
+          true
+        end
+
+        # Use this if you want to disable 'safe_read'. This is useful if you provided
+        # a mock as return type signature.
+        def self.disable_safe_read
+          undef_method(:safe_read)
+        end
       end  # base.class_eval
     end  # included
 

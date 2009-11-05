@@ -4,6 +4,7 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 class StringDictionary
   include RubyLess::SafeClass
   safe_method ['[]', Symbol] => {:class => String, :nil => true}
+  disable_safe_read
 end
 
 class SimpleHelper < Test::Unit::TestCase
@@ -54,6 +55,17 @@ class SimpleHelper < Test::Unit::TestCase
   def test_safe_read
     assert_equal 10, Dummy.new.safe_read('id')
     assert_equal "'rm' not readable", Dummy.new.safe_read('rm')
+  end
+
+  def test_disable_safe_read
+    assert Dummy.instance_methods.include?('safe_read')
+    assert !StringDictionary.instance_methods.include?('safe_read')
+  end
+
+  def test_safe_method_type
+    type = Dummy.safe_method_type(['husband'])
+    type_should_be = {:class => Dummy, :method => 'husband', :nil => true, :context => {:clever => 'no'}}
+    assert_equal type_should_be, type
   end
 
   def yt_do_test(file, test, context = yt_get('context',file,test))
