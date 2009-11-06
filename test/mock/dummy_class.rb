@@ -8,9 +8,11 @@ class Dummy < RubyLess::ActiveRecordMock
   safe_method  :parent              => {:class => 'Dummy', :special_option => 'foobar'},
                :children            => ['Dummy'],
                :project             => 'Dummy',
+               :image               => 'Dummy',
                :id                  => {:class => Number, :method => :zip},
                :name                => String,
-               :foo                 => :bar
+               :foo                 => :bar,
+               [:width, {:mode => String, :type => String, 'nice' => Boolean}]       => String
   safe_context :spouse  => 'Dummy',
                :husband => {:class => 'Dummy', :context => {:clever => 'no'}}
 
@@ -20,9 +22,18 @@ class Dummy < RubyLess::ActiveRecordMock
     @name = name
   end
 
+  def width(opts = {})
+    return 'nice!' if opts['nice']
+    "mode: #{(opts[:mode] || 'none')}, type: #{(opts[:type] || 'none')}"
+  end
+
   # This method returns pseudo-nil and does not need to be declared with :nil => true
   def project
     Dummy.new('project')
+  end
+
+  def image
+    Dummy.new('image')
   end
 
   # This method can return nil and must be declared with :nil => true

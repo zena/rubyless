@@ -10,17 +10,56 @@ module RubyLess
 
     # Return method type (options) if the given signature is a safe method for the class.
     def self.safe_method_type_for(klass, signature)
-      safe_methods_for(klass)[signature]
+      if type = safe_methods_for(klass)[signature]
+        type
+      else
+        # Signature might be ['name', {:mode => String, :type => Number}].
+
+        # Replace all hashes in signature by Hash class and check for arguments
+        signature_args = []
+        signature = signature.map do |s|
+          if s.kind_of?(Hash)
+            signature_args << s
+            Hash
+          else
+            signature_args << nil
+            s
+          end
+        end
+
+        if type = safe_methods_for(klass)[signature]
+          unless allowed_args = type[:hash_args]
+            # All arguments allowed
+            return type
+          end
+
+          # Verify arguments
+          signature_args.each_with_index do |args, i|
+            next unless args
+            # verify for each position: ({:a => 3}, {:x => :y})
+            return nil unless allowed_args_for_position = allowed_args[i]
+            args.each do |k,v|
+              return nil unless allowed_args_for_position[k] == v
+            end
+          end
+          type
+        else
+          nil
+        end
+      end
     end
 
-    # Declare a safe method for a given class
-    def self.safe_method_for(klass, hash)
+    # Declare a safe method for a given class ( same as #safe_method)
+    def self.safe_method_for(klass, methods_hash)
+      defaults = methods_hash.delete(:defaults) || {}
+
       list = (@@_safe_methods[klass] ||= {})
-      hash.each do |k,v|
-        k = [k] unless k.kind_of?(Array)
-        k[0] = k[0].to_s
-        v = {:class => v} unless v.kind_of?(Hash) || v.kind_of?(Proc)
+      methods_hash.each do |k,v|
+        k, hash_args = build_signature(k)
+        v = {:class => v} unless v.kind_of?(Hash)
+        v = defaults.merge(v)
         v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
+        v[:hash_args] = hash_args if hash_args
         list[k] = v
       end
     end
@@ -42,6 +81,11 @@ module RubyLess
         # The signature can be either a single symbol or an array containing the method name and type arguments like:
         #  [:strftime, Time, String]
         #
+        # If your method accepts variable arguments through a Hash, you should declare it with:
+        #  [:img, String, {:mode => String, :max_size => Number}]
+        #
+        # Make sure your literal values are of the right type: +:mode+ and +'mode'+ are not the same here.
+        #
         # If the signature is :defaults, the options defined are used as defaults for the other elements defined in the
         # same call.
         #
@@ -51,22 +95,7 @@ module RubyLess
         # :class  the return type (class name)
         # :nil    set this to true if the method could return nil
         def self.safe_method(methods_hash)
-          defaults = methods_hash.delete(:defaults) || {}
-
-          list = (@@_safe_methods[self] ||= {})
-          methods_hash.each do |k,v|
-            k = [k] unless k.kind_of?(Array)
-            k[0] = k[0].to_s
-            if v.kind_of?(Hash)
-              v = defaults.merge(v)
-              v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
-            elsif v.kind_of?(Proc) || v.kind_of?(Symbol)
-              # cannot merge defaults
-            else
-              v = defaults.merge(:class => v, :method => k.first.to_s)
-            end
-            list[k] = v
-          end
+          RubyLess::SafeClass.safe_method_for(self, methods_hash)
         end
 
         # A safe context is simply a safe method that can return nil in some situations. The rest of the
@@ -132,7 +161,7 @@ module RubyLess
     # Return the type if the given signature corresponds to a safe method for the object's class.
     def safe_method_type(signature)
       if type = self.class.safe_method_type(signature)
-        type.kind_of?(Symbol) ? self.send(type, signature) : type
+        type[:class].kind_of?(Symbol) ? self.send(type[:class], signature) : type
       end
     end
 
@@ -144,6 +173,22 @@ module RubyLess
     end
 
     private
+      def self.build_signature(key)
+        keys = key.kind_of?(Array) ? key : [key]
+        keys[0] = keys[0].to_s
+        hash_args = []
+        signature = keys.map do |k|
+          if k.kind_of?(Hash)
+            hash_args << k
+            Hash
+          else
+            hash_args << nil
+            k
+          end
+        end
+        [signature, (hash_args.compact.empty? ? nil : hash_args)]
+      end
+
       def self.build_safe_methods_list(klass)
         list = klass.superclass.respond_to?(:safe_methods) ? klass.superclass.safe_methods : {}
         (@@_safe_methods[klass] || {}).map do |signature, return_value|

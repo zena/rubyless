@@ -91,3 +91,13 @@ literal_argument_for_method:
 safe_method_defined_as_symbol:
   src: "foo"
   tem: "contextual_foo"
+
+optional_arguments:
+  src: "width(:mode => 'pv')"
+  tem: "var1.width({:mode => \"pv\"})"
+  res: "mode: pv, type: none"
+
+optional_arguments_string:
+  src: "width('nice' => 1 == 1)"
+  tem: "var1.width({\"nice\" => (1==1)})"
+  res: "nice!"

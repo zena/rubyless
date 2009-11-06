@@ -113,6 +113,30 @@ module RubyLess
       exp.empty? ? t('', String) : process(exp.shift)
     end
 
+    def process_hash(exp)
+      result = []
+      klass  = {}
+      until exp.empty?
+        key = exp.shift
+        if [:lit, :str].include?(key.first)
+          key = key[1]
+
+          rhs = exp.shift
+          type = rhs.first
+          rhs = process rhs
+          #rhs = "(#{rhs})" unless [:lit, :str].include? type # TODO: verify better!
+
+          result << "#{key.inspect} => #{rhs}"
+          klass[key] = rhs.klass
+        else
+          # ERROR: invalid key
+          raise "Invalid key type for hash (should be a literal value, was #{key.first.inspect})"
+        end
+      end
+
+      t "{#{result.join(', ')}}", :class => klass
+    end
+
     private
       def t(content, opts = nil)
         if opts.nil?
@@ -209,9 +233,10 @@ module RubyLess
       end
 
       def get_method(signature, receiver, is_method = true)
-        res = receiver.respond_to?(:safe_method_type) ? receiver.safe_method_type(signature) : SafeClass.safe_method_type_for(receiver, signature)
-        res = res.call(@helper, signature) if res.kind_of?(Proc)
-        res.kind_of?(Symbol) ? nil : res # Symbols not allowed here (should be resolved in receiver.safe_method_type)
+        type = receiver.respond_to?(:safe_method_type) ? receiver.safe_method_type(signature) : SafeClass.safe_method_type_for(receiver, signature)
+        return nil if !type || type[:class].kind_of?(Symbol) # we cannot send: no object.
+
+        type[:class].kind_of?(Proc) ? type[:class].call(@helper, signature) : type
       end
   end
 end

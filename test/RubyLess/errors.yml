@@ -33,4 +33,17 @@ string_argument:
 
 symbol_type_not_used_out_of_helper:
   src: "node.foo"
-  res: "'var1' does not respond to 'foo()'."
+  tem: "'var1' does not respond to 'foo()'."
+
+optional_arguments_with_dynamic_string:
+  src: "spouse.width(\"nice#{spouse.name}\" => 'pv')"
+  tem: "Invalid key type for hash (should be a literal value, was :dstr)"
+
+
+optional_arguments_bad_type:
+  src: "width(:mode => 12)"
+  res: "Unknown method 'width({:mode => 12})'."
+
+optional_arguments_bad_argument:
+  src: "width(:xyz => 'pv')"
+  res: "Unknown method 'width({:xyz => \"pv\"})'."

@@ -7,7 +7,7 @@ class StringDictionary
   disable_safe_read
 end
 
-class SimpleHelper < Test::Unit::TestCase
+class RubyLessTest < Test::Unit::TestCase
   attr_reader :context
   yamltest :src_from_title => false
   include RubyLess::SafeClass
@@ -90,9 +90,9 @@ class SimpleHelper < Test::Unit::TestCase
       "Unknown key '#{key}'. Should be 'tem' or 'res'."
     end
   rescue => err
-    # puts "\n\n#{err.message}"
-    # puts err.backtrace
-   err.message
+    #puts "\n\n#{err.message}"
+    #puts err.backtrace
+    err.message
   end
 
   yt_make
