@@ -1,7 +1,8 @@
-== 0.3.5
+== 0.3.5 2009-11-08
 
 * 1 major enhancement
   * added support for hash in signature: ['img', {'mode' => String, 'class' => String}]
+
 * 1 minor enhancement
   * added 'disable_safe_read' method
 
