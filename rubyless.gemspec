@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rubyless}
-  s.version = "0.3.5"
+  s.version = "0.3.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gaspard Bucher"]
@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.description = %q{RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked
 ruby, eventually rewriting some variables or methods.}
   s.email = %q{gaspard@teti.ch}
-  s.extra_rdoc_files = ["History.txt", "README.txt"]
-  s.files = ["History.txt", "README.txt", "Rakefile", "rubyless.gemspec", "lib/basic_types.rb", "lib/processor.rb", "lib/rubyless.rb", "lib/safe_class.rb", "lib/typed_string.rb", "test/mock", "test/mock/active_record_mock.rb", "test/mock/dummy_class.rb", "test/RubyLess", "test/RubyLess/active_record.yml", "test/RubyLess/basic.yml", "test/RubyLess/errors.yml", "test/RubyLess_test.rb", "test/test_helper.rb"]
+  s.extra_rdoc_files = ["History.txt", "README.txt", "lib/ruby_less"]
+  s.files = ["History.txt", "README.txt", "Rakefile", "rubyless.gemspec", "lib/ruby_less", "lib/ruby_less/basic_types.rb", "lib/ruby_less/processor.rb", "lib/ruby_less/safe_class.rb", "lib/ruby_less/typed_string.rb", "lib/ruby_less.rb", "lib/rubyless.rb", "test/mock", "test/mock/active_record_mock.rb", "test/mock/dummy_class.rb", "test/RubyLess", "test/RubyLess/active_record.yml", "test/RubyLess/basic.yml", "test/RubyLess/errors.yml", "test/RubyLess_test.rb", "test/test_helper.rb"]
   s.homepage = %q{http://zenadmin.org/546}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]

@@ -1,8 +1,11 @@
 require File.dirname(__FILE__) + '/active_record_mock'
+require File.dirname(__FILE__) + '/dummy_module'
 
 class Dummy < RubyLess::ActiveRecordMock
-  attr_reader :name
+  include DummyModule
   include RubyLess::SafeClass
+
+  attr_reader :name
 
   safe_method  [:ancestor?, Dummy]  => Boolean
   safe_method  :parent              => {:class => 'Dummy', :special_option => 'foobar'},

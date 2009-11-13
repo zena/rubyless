@@ -101,3 +101,8 @@ optional_arguments_string:
   src: "width('nice' => 1 == 1)"
   tem: "var1.width({\"nice\" => (1==1)})"
   res: "nice!"
+
+module_method:
+  src: "maze"
+  tem: "var1.mazette"
+  res: "Mazette !"

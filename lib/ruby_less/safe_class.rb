@@ -1,52 +1,38 @@
 module RubyLess
   module SafeClass
-    @@_safe_methods     ||= {} # defined for each class
-    @@_safe_methods_all ||= {} # full list with inherited attributes
+    @@_safe_methods        ||= {} # defined for each class
+    @@_safe_methods_parsed ||= {} # full list with inherited attributes
 
     # List of safe methods for a specific class.
     def self.safe_methods_for(klass)
-      @@_safe_methods_all[klass] ||= build_safe_methods_list(klass)
+      # Caching safe_methods_all is bad when modules are dynamically added / removed.
+      @@_safe_methods_parsed[klass] ||= build_safe_methods_list(klass)
     end
 
     # Return method type (options) if the given signature is a safe method for the class.
     def self.safe_method_type_for(klass, signature)
-      if type = safe_methods_for(klass)[signature]
-        type
-      else
-        # Signature might be ['name', {:mode => String, :type => Number}].
+      # Signature might be ['name', {:mode => String, :type => Number}].
+      # build signature arguments
 
-        # Replace all hashes in signature by Hash class and check for arguments
-        signature_args = []
-        signature = signature.map do |s|
-          if s.kind_of?(Hash)
-            signature_args << s
-            Hash
-          else
-            signature_args << nil
-            s
-          end
-        end
-
-        if type = safe_methods_for(klass)[signature]
-          unless allowed_args = type[:hash_args]
-            # All arguments allowed
-            return type
-          end
-
-          # Verify arguments
-          signature_args.each_with_index do |args, i|
-            next unless args
-            # verify for each position: ({:a => 3}, {:x => :y})
-            return nil unless allowed_args_for_position = allowed_args[i]
-            args.each do |k,v|
-              return nil unless allowed_args_for_position[k] == v
-            end
-          end
-          type
+      # Replace all hashes in signature by Hash class and check for arguments
+      signature_args = []
+      signature = signature.map do |s|
+        if s.kind_of?(Hash)
+          signature_args << s
+          Hash
         else
-          nil
+          signature_args << nil
+          s
         end
       end
+      # Find safe method in all ancestry
+      klass.ancestors.each do |ancestor|
+        return nil if ancestor == RubyLess::SafeClass
+        if type = safe_method_with_hash_args(ancestor, signature, signature_args)
+          return type
+        end
+      end
+      nil
     end
 
     # Declare a safe method for a given class ( same as #safe_method)
@@ -160,7 +146,7 @@ module RubyLess
 
     # Return the type if the given signature corresponds to a safe method for the object's class.
     def safe_method_type(signature)
-      if type = self.class.safe_method_type(signature)
+      if type = SafeClass.safe_method_type_for(self.class, signature)
         type[:class].kind_of?(Symbol) ? self.send(type[:class], signature) : type
       end
     end
@@ -190,7 +176,7 @@ module RubyLess
       end
 
       def self.build_safe_methods_list(klass)
-        list = klass.superclass.respond_to?(:safe_methods) ? klass.superclass.safe_methods : {}
+        list = {}
         (@@_safe_methods[klass] || {}).map do |signature, return_value|
           if return_value.kind_of?(Hash)
             return_value[:class] = parse_class(return_value[:class])
@@ -219,6 +205,28 @@ module RubyLess
           else
             klass
           end
+        end
+      end
+
+      def self.safe_method_with_hash_args(klass, signature, hash_args)
+        if type = safe_methods_for(klass)[signature]
+          unless allowed_args = type[:hash_args]
+            # All arguments allowed
+            return type
+          end
+
+          # Verify arguments
+          hash_args.each_with_index do |args, i|
+            next unless args
+            # verify for each position: ({:a => 3}, {:x => :y})
+            return nil unless allowed_args_for_position = allowed_args[i]
+            args.each do |k,v|
+              return nil unless allowed_args_for_position[k] == v
+            end
+          end
+          type
+        else
+          nil
         end
       end
   end

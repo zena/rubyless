@@ -1,4 +1,4 @@
-require 'safe_class'
+require 'ruby_less/safe_class'
 
 
 class Boolean
@@ -12,4 +12,3 @@ RubyLess::SafeClass.safe_method_for( Number,
              [:==, Number] => Boolean, [:< , Number] => Boolean, [:> , Number] => Boolean, [:<=, Number] => Boolean, [:>=, Number] => Boolean,
              [:- , Number] => Number,  [:+ , Number] => Number,  [:* , Number] => Number,  [:/ , Number] => Number,
              [:% , Number] => Number,  [:"-@"]       => Number )
-             

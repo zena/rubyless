@@ -2,10 +2,6 @@ require 'rubygems'
 require 'ruby_parser'
 require 'sexp_processor'
 
-require 'basic_types'
-require 'typed_string'
-require 'safe_class'
-
 module RubyLess
   class RubyLessProcessor < SexpProcessor
     attr_reader :ruby

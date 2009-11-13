@@ -90,8 +90,8 @@ class RubyLessTest < Test::Unit::TestCase
       "Unknown key '#{key}'. Should be 'tem' or 'res'."
     end
   rescue => err
-    #puts "\n\n#{err.message}"
-    #puts err.backtrace
+    # puts "\n\n#{err.message}"
+    # puts err.backtrace
     err.message
   end
 
