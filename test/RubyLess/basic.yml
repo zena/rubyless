@@ -97,6 +97,11 @@ optional_arguments:
   tem: "var1.width({:mode => \"pv\"})"
   res: "mode: pv, type: none"
 
+optional_arguments:
+  src: "width"
+  tem: "var1.width"
+  res: "mode: none, type: none"
+
 optional_arguments_string:
   src: "width('nice' => 1 == 1)"
   tem: "var1.width({\"nice\" => (1==1)})"
@@ -104,5 +109,15 @@ optional_arguments_string:
 
 module_method:
   src: "maze"
+  tem: "var1.mazette"
+  res: "Mazette !"
+
+regexp:
+  src: "maze.gsub(/ette/,'o')"
+  tem: "var1.mazette.gsub(/ette/, \"o\")"
+  res: "Mazo !"
+
+instance_variable:
+  src: "@foo.maze"
   tem: "var1.mazette"
   res: "Mazette !"

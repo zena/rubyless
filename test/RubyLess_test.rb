@@ -22,7 +22,9 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method :foo => :contextual_method, :bar => :contextual_method
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
+  safe_method_for String, [:gsub, Regexp, String] => String
   safe_method_for Time, [:strftime, String] => String
+  safe_method :@foo => {:class => Dummy, :method => "var1"}
 
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)

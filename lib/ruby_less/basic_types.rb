@@ -7,8 +7,9 @@ end
 class Number
 end
 
-
+RubyLess::SafeClass.safe_literal_class Fixnum => Number, Float => Number, Symbol => Symbol, Regexp => Regexp
 RubyLess::SafeClass.safe_method_for( Number,
-             [:==, Number] => Boolean, [:< , Number] => Boolean, [:> , Number] => Boolean, [:<=, Number] => Boolean, [:>=, Number] => Boolean,
-             [:- , Number] => Number,  [:+ , Number] => Number,  [:* , Number] => Number,  [:/ , Number] => Number,
-             [:% , Number] => Number,  [:"-@"]       => Number )
+  [:==, Number] => Boolean, [:< , Number] => Boolean, [:> , Number] => Boolean,
+  [:<=, Number] => Boolean, [:>=, Number] => Boolean, [:- , Number] => Number,
+  [:+ , Number] => Number,  [:* , Number] => Number,  [:/ , Number] => Number,
+  [:% , Number] => Number,  [:"-@"]       => Number )

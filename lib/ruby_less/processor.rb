@@ -101,7 +101,7 @@ module RubyLess
 
     def process_lit(exp)
       lit = exp.shift
-      t lit.inspect, lit.class == Symbol ? Symbol : Number
+      t lit.inspect, get_lit_class(lit.class)
     end
 
     def process_str(exp)
@@ -138,6 +138,10 @@ module RubyLess
       end
 
       t "{#{result.join(', ')}}", :class => klass
+    end
+
+    def process_ivar(exp)
+      method_call(nil, exp)
     end
 
     private
@@ -177,14 +181,15 @@ module RubyLess
         if arg_sexp
           args = process(arg_sexp)
           if args == ''
+            args = nil
             signature = [method]
           else
             signature = [method] + [args.klass].flatten
           end
           # execution conditional
-          cond = args.cond || []
+          cond = args ? (args.cond || []) : []
         else
-          args = []
+          args = nil
           signature = [method]
           cond = []
         end
@@ -193,7 +198,7 @@ module RubyLess
           if receiver.could_be_nil?
             cond += receiver.cond
           end
-          raise RubyLess::NoMethodError.new("'#{receiver}' does not respond to '#{method}(#{signature[1..-1].join(', ')})'.") unless opts = get_method(signature, receiver.klass)
+          opts = get_method(receiver, signature)
           method = opts[:method]
           if method == '/'
             t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
@@ -204,13 +209,13 @@ module RubyLess
           elsif method == '[]'
             t_if cond, "#{receiver.raw}[#{args.raw}]", opts
           else
-            args = "(#{args.raw})" if args != ''
+            args = "(#{args.raw})" if args
             t_if cond, "#{receiver.raw}.#{method}#{args}", opts
           end
         else
-          raise RubyLess::NoMethodError.new("Unknown method '#{method}(#{args.raw})'.") unless opts = get_method(signature, @helper, false)
+          opts = get_method(nil, signature)
           method = opts[:method]
-          args = "(#{args.raw})" if args != ''
+          args = "(#{args.raw})" if args
           t_if cond, "#{method}#{args}", opts
         end
       end
@@ -235,11 +240,19 @@ module RubyLess
         res
       end
 
-      def get_method(signature, receiver, is_method = true)
-        type = receiver.respond_to?(:safe_method_type) ? receiver.safe_method_type(signature) : SafeClass.safe_method_type_for(receiver, signature)
-        return nil if !type || type[:class].kind_of?(Symbol) # we cannot send: no object.
+      def get_method(receiver, signature)
+        klass = receiver ? receiver.klass : @helper
+        type = klass.respond_to?(:safe_method_type) ? klass.safe_method_type(signature) : SafeClass.safe_method_type_for(klass, signature)
+        raise RubyLess::NoMethodError.new(receiver, klass, signature) if !type || type[:class].kind_of?(Symbol) # we cannot send: no object.
 
         type[:class].kind_of?(Proc) ? type[:class].call(@helper, signature) : type
+      end
+
+      def get_lit_class(klass)
+        unless lit_class = RubyLess::SafeClass.literal_class_for(klass)
+          raise RubyLess::SyntaxError.new("#{klass} literal not supported by RubyLess.")
+        end
+        lit_class
       end
   end
 end

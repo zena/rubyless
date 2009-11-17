@@ -1,7 +1,8 @@
 module RubyLess
   module SafeClass
-    @@_safe_methods        ||= {} # defined for each class
-    @@_safe_methods_parsed ||= {} # full list with inherited attributes
+    @@_safe_methods         ||= {} # defined for each class
+    @@_safe_methods_parsed  ||= {} # full list with inherited attributes
+    @@_safe_literal_classes ||= {}
 
     # List of safe methods for a specific class.
     def self.safe_methods_for(klass)
@@ -33,6 +34,14 @@ module RubyLess
         end
       end
       nil
+    end
+
+    def self.literal_class_for(klass)
+      @@_safe_literal_classes[klass]
+    end
+
+    def self.safe_literal_class(hash)
+      @@_safe_literal_classes.merge!(hash)
     end
 
     # Declare a safe method for a given class ( same as #safe_method)
@@ -91,6 +100,10 @@ module RubyLess
           methods_hash[:defaults] ||= {}
           methods_hash[:defaults][:nil] = true
           safe_method(methods_hash)
+        end
+
+        def self.safe_literal_class(hash)
+          RubyLess::SafeClass.safe_literal_class(hash)
         end
 
         # Declare a safe method to access a list of attributes.

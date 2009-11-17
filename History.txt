@@ -1,11 +1,14 @@
 == 0.3.6
 
-* 1 major enhancement
+* 2 major enhancement
   * parsing inheritance tree to get safe_method_type
+  * instance variable (ivar) support (declared as safe_methods)
 
-* 2 minor enhancements
+* 4 minor enhancements
   * moved files into a ruby_less directory to enable file auto-loading
   * raises RubyLess::NoMethodError / RubyLess::SyntaxError instead of generic Error
+  * improved error reporting use method signature
+  * added 'safe_literal_class' to enable/disable ruby literals
 
 == 0.3.5 2009-11-08
 
