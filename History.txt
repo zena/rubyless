@@ -3,8 +3,9 @@
 * 1 major enhancement
   * parsing inheritance tree to get safe_method_type
 
-* 1 minor enhancement
+* 2 minor enhancements
   * moved files into a ruby_less directory to enable file auto-loading
+  * raises RubyLess::NoMethodError / RubyLess::SyntaxError instead of generic Error
 
 == 0.3.5 2009-11-08
 

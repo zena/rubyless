@@ -13,7 +13,7 @@ zero_div:
 
 looping:
   src: "while(true) do puts 'flood' end"
-  res: 'Bug! Unknown node-type :while to RubyLess::RubyLessProcessor'
+  res: "'while' not available in RubyLess."
 
 add_two_strings:
   src: "name + 14"

@@ -23,11 +23,18 @@ module RubyLess
       self.expected = TypedString
     end
 
-    #def process(exp)
-    #  return nil if exp.nil?
-    #  method = exp.shift
-    #  send("process_#{method}", exp)
-    #end
+    def process(exp)
+      super
+    rescue UnknownNodeError => err
+      if err.message =~ /Unknown node-type :(.*?) /
+        raise RubyLess::SyntaxError.new("'#{$1}' not available in RubyLess.")
+      else
+        raise RubyLess::SyntaxError.new(err.message)
+      end
+      # return nil if exp.nil?
+      # method = exp.shift
+      # send("process_#{method}", exp)
+    end
 
     def process_and(exp)
       t "(#{process(exp.shift)} and #{process(exp.shift)})", Boolean
@@ -47,9 +54,9 @@ module RubyLess
       false_res = process(exp.shift)
 
       if true_res && false_res && true_res.klass != false_res.klass
-        raise "Error in conditional expression: '#{true_res}' and '#{false_res}' do not return results of same type (#{true_res.klass} != #{false_res.klass})."
+        raise RubyLess::SyntaxError.new("Error in conditional expression: '#{true_res}' and '#{false_res}' do not return results of same type (#{true_res.klass} != #{false_res.klass}).")
       end
-      raise "Error in conditional expression." unless true_res || false_res
+      raise RubyLess::SyntaxError.new("Error in conditional expression.") unless true_res || false_res
       opts = {}
       opts[:nil] = true_res.nil? || true_res.could_be_nil? || false_res.nil? || false_res.could_be_nil?
       opts[:class] = true_res ? true_res.klass : false_res.klass
@@ -86,7 +93,7 @@ module RubyLess
     def process_vcall(exp)
       var_name = exp.shift
       unless opts = get_method([var_name], @helper, false)
-        raise "Unknown variable or method '#{var_name}'."
+        raise RubyLess::NoMethodError.new("Unknown variable or method '#{var_name}'.")
       end
       method = opts[:method]
       t method, opts
@@ -126,7 +133,7 @@ module RubyLess
           klass[key] = rhs.klass
         else
           # ERROR: invalid key
-          raise "Invalid key type for hash (should be a literal value, was #{key.first.inspect})"
+          raise RubyLess::SyntaxError.new("Invalid key type for hash (should be a literal value, was #{key.first.inspect})")
         end
       end
 
@@ -186,7 +193,7 @@ module RubyLess
           if receiver.could_be_nil?
             cond += receiver.cond
           end
-          raise "'#{receiver}' does not respond to '#{method}(#{signature[1..-1].join(', ')})'." unless opts = get_method(signature, receiver.klass)
+          raise RubyLess::NoMethodError.new("'#{receiver}' does not respond to '#{method}(#{signature[1..-1].join(', ')})'.") unless opts = get_method(signature, receiver.klass)
           method = opts[:method]
           if method == '/'
             t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
@@ -201,7 +208,7 @@ module RubyLess
             t_if cond, "#{receiver.raw}.#{method}#{args}", opts
           end
         else
-          raise "Unknown method '#{method}(#{args.raw})'." unless opts = get_method(signature, @helper, false)
+          raise RubyLess::NoMethodError.new("Unknown method '#{method}(#{args.raw})'.") unless opts = get_method(signature, @helper, false)
           method = opts[:method]
           args = "(#{args.raw})" if args != ''
           t_if cond, "#{method}#{args}", opts

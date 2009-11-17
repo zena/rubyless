@@ -89,7 +89,7 @@ class RubyLessTest < Test::Unit::TestCase
     else
       "Unknown key '#{key}'. Should be 'tem' or 'res'."
     end
-  rescue => err
+  rescue RubyLess::Error => err
     # puts "\n\n#{err.message}"
     # puts err.backtrace
     err.message
