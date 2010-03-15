@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/active_record_mock'
 require File.dirname(__FILE__) + '/dummy_module'
+require File.dirname(__FILE__) + '/property_column'
 
 class Dummy < RubyLess::ActiveRecordMock
   include DummyModule
@@ -25,6 +26,23 @@ class Dummy < RubyLess::ActiveRecordMock
   def initialize(name = 'dummy')
     @name = name
   end
+
+  # Mock Property ================= [
+  def self.schema; self; end
+  def self.columns
+    {
+      'dog_name' => MockPropertyColumn.new('dog_name', nil, :string),
+      'dog_age'  => MockPropertyColumn.new('dog_age', 0, :number),
+    }
+  end
+  def prop
+    {
+      'dog_name' => 'Biscotte',
+      'dog_age' => 6,
+    }
+  end
+  # Mock Property ================= ]
+  safe_property  :dog_name, :dog_age
 
   def width(opts = {})
     return 'nice!' if opts['nice']

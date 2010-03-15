@@ -10,15 +10,15 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gaspard Bucher"]
   s.date = %q{2010-03-15}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked ruby, eventually rewriting some variables or methods.}
   s.email = %q{gaspard@teti.ch}
   s.extra_rdoc_files = [
-    "README.txt"
+    "README.rdoc"
   ]
   s.files = [
     ".gitignore",
      "History.txt",
-     "README.txt",
+     "README.rdoc",
      "Rakefile",
      "lib/ruby_less.rb",
      "lib/ruby_less/basic_types.rb",
@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{RubyLess is an interpreter for "safe ruby"}
   s.test_files = [
     "test/mock/active_record_mock.rb",
      "test/mock/dummy_class.rb",

@@ -10,8 +10,6 @@ require 'ruby_less/safe_class'
 require 'ruby_less/processor'
 
 module RubyLess
-  VERSION = '0.4.0'
-
   def self.translate(string, helper)
     RubyLessProcessor.translate(string, helper)
   end

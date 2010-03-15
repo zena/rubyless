@@ -8,8 +8,8 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.version = RubyLess::VERSION
     gem.name = "rubyless"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{RubyLess is an interpreter for "safe ruby"}
+    gem.description = %Q{RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked ruby, eventually rewriting some variables or methods.}
     gem.email = "gaspard@teti.ch"
     gem.homepage = "http://zenadmin.org/546"
     gem.authors = ["Gaspard Bucher"]

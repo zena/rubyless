@@ -126,3 +126,8 @@ prepend_arg:
   src: "prepend_test(4)"
   tem: "add(10, 4)"
   res: "14"
+
+safe_property:
+  src: "dog_name"
+  tem: "var1.prop['dog_name']"
+  res: "Biscotte"

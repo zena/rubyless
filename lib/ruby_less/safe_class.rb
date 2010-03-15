@@ -128,6 +128,30 @@ module RubyLess
           end
         end
 
+        # Declare a safe method to access a list of properties.
+        # This method should only be used in conjunction with the Property gem.
+        def self.safe_property(*properties)
+          columns = schema.columns
+          properties.each do |att|
+            if col = columns[att.to_s]
+              opts = {}
+              opts[:nil]   = col.default.nil?
+              if col.number?
+                opts[:class] = Number
+              elsif col.text?
+                opts[:class] = String
+              else
+                opts[:class] = col.klass
+              end
+              opts[:method] = "prop['#{att.to_s.gsub("'",'')}']"
+              safe_method att.to_sym => opts
+            else
+              puts "Warning: could not declare safe_property '#{att}' (No property column with this name found in class #{self})"
+            end
+          end
+        end
+
+
         # Declare a safe method for a given class
         def self.safe_method_for(klass, signature)
           SafeClass.safe_method_for(klass, signature)
