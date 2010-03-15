@@ -29,8 +29,10 @@ class RubyLessTest < Test::Unit::TestCase
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
     unless res = super
-      # try to execute method in the current var "var.method"
-      if res = context[:node_class].safe_method_type(signature)
+      if signature == ['prepend_test', Number]
+        res ={:class => Number, :prepend_args => RubyLess::TypedString.new('10', :class => Number), :method => 'add'}
+      elsif res = context[:node_class].safe_method_type(signature)
+        # try to execute method in the current var "var.method"
         res = res.call(self, signature) if res.kind_of?(Proc)
         res = res.merge(:method => "#{context[:node]}.#{res[:method] || signature[0]}")
       end
@@ -44,6 +46,10 @@ class RubyLessTest < Test::Unit::TestCase
 
   def var1
     Dummy.new
+  end
+
+  def add(a,b)
+    a+b
   end
 
   def vowel_count(str)

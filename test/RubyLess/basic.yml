@@ -121,3 +121,8 @@ instance_variable:
   src: "@foo.maze"
   tem: "var1.mazette"
   res: "Mazette !"
+
+prepend_arg:
+  src: "prepend_test(4)"
+  tem: "add(10, 4)"
+  res: "14"

@@ -96,6 +96,9 @@ module RubyLess
         raise RubyLess::NoMethodError.new("Unknown variable or method '#{var_name}'.")
       end
       method = opts[:method]
+      if args = opts[:prepend_args]
+        method = "#{method}(#{args.raw})"
+      end
       t method, opts
     end
 
@@ -209,12 +212,14 @@ module RubyLess
           elsif method == '[]'
             t_if cond, "#{receiver.raw}[#{args.raw}]", opts
           else
+            args = args_with_prepend(args, opts)
             args = "(#{args.raw})" if args
             t_if cond, "#{receiver.raw}.#{method}#{args}", opts
           end
         else
           opts = get_method(nil, signature)
           method = opts[:method]
+          args = args_with_prepend(args, opts)
           args = "(#{args.raw})" if args
           t_if cond, "#{method}#{args}", opts
         end
@@ -253,6 +258,19 @@ module RubyLess
           raise RubyLess::SyntaxError.new("#{klass} literal not supported by RubyLess.")
         end
         lit_class
+      end
+
+      def args_with_prepend(args, opts)
+        if prepend_args = opts[:prepend_args]
+          if args
+            prepend_args.append_argument(args)
+            prepend_args
+          else
+            prepend_args
+          end
+        else
+          args
+        end
       end
   end
 end

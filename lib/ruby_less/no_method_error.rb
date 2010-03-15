@@ -31,8 +31,8 @@ module RubyLess
       if signature.size == 0
         arguments = ''
       else
-        arguments = signature.inspect[1..-2]
-        if signature.first.kind_of?(Array) || signature.first.kind_of?(Hash)
+        arguments = signature.map{|s| s.kind_of?(Class) ? s.to_s : s.inspect}.join(', ')
+        if signature.size == 1 && (signature.first.kind_of?(Array) || signature.first.kind_of?(Hash))
           arguments = arguments[1..-2]
         end
       end

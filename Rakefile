@@ -1,48 +1,56 @@
-require "rubygems"
-require "rake/rdoctask"
+require 'rubygems'
+require 'rake'
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "rubyless"
+    gem.summary = %Q{TODO: one-line summary of your gem}
+    gem.description = %Q{TODO: longer description of your gem}
+    gem.email = "gaspard@teti.ch"
+    gem.homepage = "http://zenadmin.org/546"
+    gem.authors = ["Gaspard Bucher"]
+    gem.add_dependency 'ruby_parser', '>= 2.0.4'
+    gem.add_dependency 'sexp_processor', '>= 3.0.1'
+    gem.add_development_dependency "shoulda", ">= 0"
+    gem.add_development_dependency "yamltest", ">= 0.5.3"
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
+
+require 'rake/testtask'
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.pattern = 'test/**/*_test.rb'
+  test.verbose = true
+end
+
+begin
+  require 'rcov/rcovtask'
+  Rcov::RcovTask.new do |test|
+    test.libs << 'test'
+    test.pattern = 'test/**/*_test.rb'
+    test.verbose = true
+  end
+rescue LoadError
+  task :rcov do
+    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+  end
+end
+
+task :test => :check_dependencies
 
 task :default => :test
 
-require "rake/testtask"
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList["test/**/*_test.rb"]
-  t.verbose = true
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "rubyless #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end
-
-
-# BONES gem management
-
-begin
-  require 'bones'
-  Bones.setup
-rescue LoadError
-  begin
-    load 'tasks/setup.rb'
-  rescue LoadError
-    raise RuntimeError, '### please install the "bones" gem ###'
-  end
-end
-
-ensure_in_path 'lib'
-require 'rubyless'
-
-PROJ.name = 'rubyless'
-PROJ.authors = 'Gaspard Bucher'
-PROJ.email = 'gaspard@teti.ch'
-PROJ.url = 'http://zenadmin.org/546'
-PROJ.version = RubyLess::VERSION
-PROJ.rubyforge.name = 'rubyless'
-
-PROJ.spec.opts << '--color'
-PROJ.gem.files = (
-  ['History.txt', 'README.txt', 'Rakefile', 'rubyless.gemspec'] +
-  ['lib', 'test'].map do |d|
-    Dir.glob("#{d}/**/*").reject {|path| File.basename(path) =~ /^\./ }
-  end
-).flatten
-
-PROJ.gem.dependencies << ['ruby_parser', '>= 2.0.4']
-PROJ.gem.dependencies << ['sexp_processor', '>= 3.0.1']
-PROJ.gem.development_dependencies << ['yamltest', '>= 0.5.3']
-
