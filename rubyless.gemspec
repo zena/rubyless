@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Gaspard Bucher"]
-  s.date = %q{2010-03-15}
+  s.date = %q{2010-03-16}
   s.description = %q{RubyLess is an interpreter for "safe ruby". The idea is to transform some "unsafe" ruby code into safe, type checked ruby, eventually rewriting some variables or methods.}
   s.email = %q{gaspard@teti.ch}
   s.extra_rdoc_files = [
@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
      "test/mock/active_record_mock.rb",
      "test/mock/dummy_class.rb",
      "test/mock/dummy_module.rb",
+     "test/mock/property_column.rb",
      "test/test_helper.rb"
   ]
   s.homepage = %q{http://zenadmin.org/546}
@@ -50,7 +51,10 @@ Gem::Specification.new do |s|
     "test/mock/active_record_mock.rb",
      "test/mock/dummy_class.rb",
      "test/mock/dummy_module.rb",
+     "test/mock/property_column.rb",
      "test/RubyLess_test.rb",
+     "test/safe_class_test.rb",
+     "test/signature_hash_test.rb",
      "test/test_helper.rb"
   ]
 

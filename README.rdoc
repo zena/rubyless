@@ -50,16 +50,16 @@ Or you can group all declarations in a single place with 'safe_method_for':
 You can now parse some ruby code:
 
  RubyLess.translate("!prev.ancestor?(main) && !node.ancestor?(main)", self)
- => "(not previous.ancestor?(@node) and not var1.ancestor?(@node))"
+ => "(not previous.ancestor?(@node) and not node.ancestor?(@node))"
 
  RubyLess.translate("id > 45 and (3 > -id or 3+3)", self)
- => "(var1.zip>45 and ((3>-var1.zip) or (3+3)))"
+ => "(node.zip>45 and ((3>-node.zip) or (3+3)))"
 
  RubyLess.translate("strftime(now, '%Y')", self)
  => "strftime(Time.now, \"%Y\")"
 
  RubyLess.translate("log_info(spouse, spouse.name)", self)
- => "(var1.spouse ? log_info(var1.spouse, var1.spouse.name) : nil)"
+ => "(node.spouse ? log_info(node.spouse, node.spouse.name) : nil)"
 
 You can look at the tests for an idea of how to declare things. If you have more questions, ask on zena's mailing list:
 

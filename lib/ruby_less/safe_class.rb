@@ -44,6 +44,10 @@ module RubyLess
       @@_safe_literal_classes.merge!(hash)
     end
 
+    def self.all_safe_methods
+      @@_safe_methods
+    end
+
     # Declare a safe method for a given class ( same as #safe_method)
     def self.safe_method_for(klass, methods_hash)
       defaults = methods_hash.delete(:defaults) || {}
@@ -213,7 +217,7 @@ module RubyLess
       end
 
       def self.build_safe_methods_list(klass)
-        list = {}
+        list = SignatureHash.new
         (@@_safe_methods[klass] || {}).map do |signature, return_value|
           if return_value.kind_of?(Hash)
             return_value[:class] = parse_class(return_value[:class])
@@ -258,7 +262,7 @@ module RubyLess
             # verify for each position: ({:a => 3}, {:x => :y})
             return nil unless allowed_args_for_position = allowed_args[i]
             args.each do |k,v|
-              return nil unless allowed_args_for_position[k] == v
+              return nil unless v.ancestors.include?(allowed_args_for_position[k])
             end
           end
           type

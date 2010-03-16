@@ -71,3 +71,6 @@ class Dummy < RubyLess::ActiveRecordMock
     10
   end
 end
+
+class SubDummy < Dummy
+end

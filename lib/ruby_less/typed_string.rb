@@ -26,14 +26,14 @@ module RubyLess
     
     # Condition that could yield a nil result in the whole expression.
     # For example in the following expression:
-    #  var1.spouse.name == ''
-    # "var1.spouse" would be the condition that could yield 'nil'.
+    #  node.spouse.name == ''
+    # "node.spouse" would be the condition that could yield 'nil'.
     def cond
       @opts[:cond]
     end
     
     # raw result without nil checking:
-    # "var1.spouse.name" instead of "(var1.spouse ? var1.spouse.name : nil)"
+    # "node.spouse.name" instead of "(node.spouse ? node.spouse.name : nil)"
     def raw
       @opts[:raw] || self.to_s
     end

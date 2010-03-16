@@ -1,9 +1,10 @@
 == 0.4.0
 
-* 3 major enhancement
+* 4 major enhancement
   * parsing inheritance tree to get safe_method_type
   * instance variable (ivar) support (declared as safe_methods)
   * added support for prepend variables to tranform methods like link("foo") to link(@node, "foo")
+  * better handling of sub-types in signature matching
 
 * 4 minor enhancements
   * moved files into a ruby_less directory to enable file auto-loading

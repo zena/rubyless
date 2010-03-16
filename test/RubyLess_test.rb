@@ -1,10 +1,14 @@
 require 'date'
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'test_helper'
 
 class StringDictionary
   include RubyLess::SafeClass
   safe_method ['[]', Symbol] => {:class => String, :nil => true}
   disable_safe_read
+end
+
+# Used to test sub-classes in optional arguments
+class SubString < String
 end
 
 class RubyLessTest < Test::Unit::TestCase
@@ -24,7 +28,9 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method_for String, [:to_s] => String
   safe_method_for String, [:gsub, Regexp, String] => String
   safe_method_for Time, [:strftime, String] => String
-  safe_method :@foo => {:class => Dummy, :method => "var1"}
+  safe_method :@foo => {:class => Dummy, :method => "node"}
+  safe_method :sub => SubDummy
+  safe_method :str => SubString
 
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
@@ -44,8 +50,16 @@ class RubyLessTest < Test::Unit::TestCase
     {:method => "contextual_#{signature[0]}", :class => String}
   end
 
-  def var1
+  def node
     Dummy.new
+  end
+
+  def sub
+    SubDummy.new
+  end
+
+  def str
+    "str"
   end
 
   def add(a,b)
@@ -84,7 +98,7 @@ class RubyLessTest < Test::Unit::TestCase
   end
 
   def parse(key, file, test, opts)
-    @context = {:node => 'var1', :node_class => Dummy}
+    @context = {:node => 'node', :node_class => Dummy}
     source = yt_get('src', file, test)
     case key
     when 'tem'
