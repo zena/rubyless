@@ -8,7 +8,6 @@ class SignatureHashTest < Test::Unit::TestCase
     subject do
       RubyLess::SignatureHash[
         [1, 2] => 'one, two',
-        :x => 'sym_x',
         [:x, String, String] => 'x_string_string'
       ]
     end

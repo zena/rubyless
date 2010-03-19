@@ -1,0 +1,11 @@
+empty:
+  str: ""
+  tem: '""'
+
+text:
+  str: "hello"
+  tem: '"hello"'
+
+dynamic_string:
+  str: 'one #{name} two'
+  tem: '"one #{node.name} two"'

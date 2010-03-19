@@ -14,4 +14,14 @@ module RubyLess
   def self.translate(string, helper)
     RubyLessProcessor.translate(string, helper)
   end
+
+  def self.translate_string(string, helper)
+    if string =~ /\#\{/
+      ::RubyLess.translate("%Q{#{string}}", helper)
+    else
+      string.inspect
+    end
+  rescue => err
+    raise ::RubyLess::Error.new("Error parsing string \"#{string}\": #{err.message.strip}")
+  end
 end

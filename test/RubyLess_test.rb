@@ -92,24 +92,36 @@ class RubyLessTest < Test::Unit::TestCase
 
   def yt_do_test(file, test, context = yt_get('context',file,test))
     @@test_strings[file][test].keys.each do |key|
-      next if ['src', 'context'].include?(key)
+      next if ['src', 'context', 'str'].include?(key)
       yt_assert yt_get(key,file,test), parse(key, file, test, context)
     end
   end
 
   def parse(key, file, test, opts)
     @context = {:node => 'node', :node_class => Dummy}
-    source = yt_get('src', file, test)
-    case key
-    when 'tem'
-      source ? RubyLess.translate(source, self) : yt_get('tem', file, test)
-    when 'res'
-      res = RubyLess.translate(source, self)
-      eval(source ? RubyLess.translate(source, self) : yt_get('tem', file, test)).to_s
-    when 'sxp'
-      RubyParser.new.parse(source).inspect
-    else
-      "Unknown key '#{key}'. Should be 'tem' or 'res'."
+    if source = yt_get('str', file, test)
+      case key
+      when 'tem'
+        source ? RubyLess.translate_string(source, self) : yt_get('tem', file, test)
+      when 'res'
+        eval(source ? RubyLess.translate_string(source, self) : yt_get('tem', file, test)).to_s
+      when 'sxp'
+        RubyParser.new.parse(source).inspect
+      else
+        "Unknown key '#{key}'. Should be 'tem' or 'res'."
+      end
+    elsif source = yt_get('src', file, test)
+      case key
+      when 'tem'
+        source ? RubyLess.translate(source, self) : yt_get('tem', file, test)
+      when 'res'
+        res = RubyLess.translate(source, self)
+        eval(source ? RubyLess.translate(source, self) : yt_get('tem', file, test)).to_s
+      when 'sxp'
+        RubyParser.new.parse(source).inspect
+      else
+        "Unknown key '#{key}'. Should be 'tem' or 'res'."
+      end
     end
   rescue RubyLess::Error => err
     # puts "\n\n#{err.message}"

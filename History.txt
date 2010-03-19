@@ -1,74 +1,75 @@
 == 0.4.0 2010-03-19
 
 * 4 major enhancement
-  * parsing inheritance tree to get safe_method_type
-  * instance variable (ivar) support (declared as safe_methods)
-  * added support for prepend variables to tranform methods like link("foo") to link(@node, "foo")
-  * better handling of sub-types in signature matching
+  * Parsing inheritance tree to get safe_method_type.
+  * Instance variable (ivar) support (declared as safe_methods).
+  * Added support for prepend variables to tranform methods like link("foo") to link(@node, "foo").
+  * Better handling of sub-types in signature matching.
 
-* 4 minor enhancements
-  * moved files into a ruby_less directory to enable file auto-loading
-  * raises RubyLess::NoMethodError / RubyLess::SyntaxError instead of generic Error
-  * improved error reporting use method signature
-  * added 'safe_literal_class' to enable/disable ruby literals
+* 5 minor enhancements
+  * Moved files into a ruby_less directory to enable file auto-loading.
+  * Raises RubyLess::NoMethodError / RubyLess::SyntaxError instead of generic Error.
+  * Improved error reporting use method signature.
+  * Added 'safe_literal_class' to enable/disable ruby literals.
+  * Added 'RubyLess.translate_string' method.
 
 == 0.3.5 2009-11-08
 
 * 1 major enhancement
-  * added support for hash in signature: ['img', {'mode' => String, 'class' => String}]
+  * Added support for hash in signature: ['img', {'mode' => String, 'class' => String}].
 
 * 1 minor enhancement
-  * added 'disable_safe_read' method
+  * Added 'disable_safe_read' method.
 
 == 0.3.4 2009-11-05
 
 * 1 minor enhancement
-  * added 'safe_context' method
+  * Added 'safe_context' method.
 
 == 0.3.3 2009-10-26
 
 * 1 minor enhancement
-  * added support for symbols (only used with helper)
+  * Added support for symbols (only used with helper).
 
 == 0.3.2 2009-10-15
 
 * 1 minor enhancement
-  * removed 'ruby-debug' require
+  * Removed 'ruby-debug' require.
 
 == 0.3.1 2009-10-07
 
 * 3 major enhancements
-  * method name in signatures should always be a string
-  * type[:method] is always set and is always a string
-  * fixed how class type is guessed from ActiveRecord column
+  * Method name in signatures should always be a string.
+  * Type[:method] is always set and is always a string.
+  * Fixed how class type is guessed from ActiveRecord column.
 
 * 1 minor enhancement
-  * added 'safe_read' method to objects
+  * Added 'safe_read' method to objects.
 
 == 0.3.1 2009-10-03
 
 * 1 major enhancement
-  * Moved from ParseTree to RubyParser
+  * Moved from ParseTree to RubyParser.
 
 * 1 minor enhancement:
-  * Using Mr Bones to generate gems
+  * Using Mr Bones to generate gems.
 
 == 0.2.1 2009-07-01
 
 * 2 minor enhancements:
-  * :[] method is now treated as in conventional ruby (foo[:bar], not foo.[](:bar))
-  * Better error reporting in case of signature mismatch
+  * :[] method is now treated as in conventional ruby (foo[:bar], not foo.[](:bar)).
+  * Better error reporting in case of signature mismatch.
 
 == 0.2.0 2009-06-02
 
 * 1 major enhancement:
-  * Added support for ActiveRecord attributes
+  * Added support for ActiveRecord attributes.
 
 * 2 minor enhancements:
   * Better documentation
-  * Removed eval (this means safe methods are globally declared)
+  * Removed eval (this means safe methods are globally declared).
 
 == 0.1.0 2009-06-02
 
 * 1 major enhancement:
-  * Initial alpha release
+  * Initial alpha release.
