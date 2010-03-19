@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
      "test/RubyLess/active_record.yml",
      "test/RubyLess/basic.yml",
      "test/RubyLess/errors.yml",
+     "test/RubyLess/string.yml",
      "test/RubyLess_test.rb",
      "test/mock/active_record_mock.rb",
      "test/mock/dummy_class.rb",
@@ -48,7 +49,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://zenadmin.org/546}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{RubyLess is an interpreter for "safe ruby"}
   s.test_files = [
     "test/mock/active_record_mock.rb",
