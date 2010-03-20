@@ -1,4 +1,4 @@
-== 0.4.0 2010-03-19
+== 0.4.0 2010-03-21
 
 * 4 major enhancement
   * Parsing inheritance tree to get safe_method_type.
