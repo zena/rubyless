@@ -1,0 +1,15 @@
+parse_hash:
+  src: "{'one' => 1, 2 => 'two'}"
+  tem: "{\"one\" => 1, 2 => \"two\"}"
+
+hash_access:
+  src: "dictionary[:key]"
+  tem: "get_dict[:key]"
+
+append_hash:
+  src: "append_hash(5, 'foo' => 'Foo')"
+  tem: "add(5, {\"foo\" => \"Foo\", :xyz => \"bar\"})"
+
+hash_arguments:
+  src: "hash_args('name' => str, 'age' => 13)"
+  tem: "hash_args({\"name\" => str, \"age\" => 13})"

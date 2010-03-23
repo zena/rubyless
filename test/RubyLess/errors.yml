@@ -47,3 +47,7 @@ optional_arguments_bad_type:
 optional_arguments_bad_argument:
   src: "width(:xyz => 'pv')"
   res: "(RubyLessTest): unknown method 'width(:xyz=>String)'."
+
+hash_arguments_wrong_type:
+  src: "hash_args('name' => 45)"
+  tem: "(RubyLessTest): unknown method 'hash_args(\"name\"=>Number)'."

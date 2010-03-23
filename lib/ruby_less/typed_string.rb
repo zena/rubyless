@@ -38,6 +38,17 @@ module RubyLess
       @list ||= []
     end
 
+    # Hash arguments. This is only used to resolve parameter insertion with
+    # append_hash.
+    def hash
+      @hash ||= {}
+    end
+
+    # Used to keep hash order (this is useful for testing).
+    def keys
+      @hash_keys ||= []
+    end
+
     # raw result without nil checking:
     # "node.spouse.name" instead of "(node.spouse ? node.spouse.name : nil)"
     def raw
@@ -53,6 +64,27 @@ module RubyLess
         replace(typed_string.raw)
       else
         replace("#{self.raw}, #{typed_string.raw}")
+      end
+    end
+
+    def rebuild_arguments
+      replace(list.map {|arg| arg.raw}.join(', ')) if @list
+    end
+
+    def set_hash(key, value)
+      self.hash[key] = value
+      self.keys << key unless self.keys.include?(key)
+      @opts[:class] = {} unless self.klass.kind_of?(Hash)
+      self.klass[key] = value.klass
+    end
+
+    def rebuild_hash
+      if @hash
+        result = []
+        @hash_keys.each do |k|
+          result << "#{k.inspect} => #{@hash[k]}"
+        end
+        replace "{#{result.join(', ')}}"
       end
     end
 

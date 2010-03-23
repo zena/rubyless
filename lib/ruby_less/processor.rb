@@ -120,8 +120,7 @@ module RubyLess
     end
 
     def process_hash(exp)
-      result = []
-      klass  = {}
+      result = t "", String
       until exp.empty?
         key = exp.shift
         if [:lit, :str].include?(key.first)
@@ -131,16 +130,14 @@ module RubyLess
           type = rhs.first
           rhs = process rhs
           #rhs = "(#{rhs})" unless [:lit, :str].include? type # TODO: verify better!
-
-          result << "#{key.inspect} => #{rhs}"
-          klass[key] = rhs.klass
+          result.set_hash(key, rhs)
         else
           # ERROR: invalid key
           raise RubyLess::SyntaxError.new("Invalid key type for hash (should be a literal value, was #{key.first.inspect})")
         end
       end
-
-      t "{#{result.join(', ')}}", :class => klass
+      result.rebuild_hash
+      result
     end
 
     def process_ivar(exp)
@@ -282,7 +279,7 @@ module RubyLess
       end
 
       def args_with_prepend(args, opts)
-        if prepend_args = opts[:prepend_args]
+        args = if prepend_args = opts[:prepend_args]
           if args
             prepend_args.append_argument(args)
             prepend_args
@@ -292,6 +289,20 @@ module RubyLess
         else
           args
         end
+
+        if append_hash = opts[:append_hash]
+          last_arg = args.list.last
+          if last_arg.klass.kind_of?(Hash)
+            append_hash.each do |key, value|
+              last_arg.set_hash(key, value)
+            end
+            last_arg.rebuild_hash
+            args.rebuild_arguments
+          else
+            args.append_argument(t(append_hash.inspect, :class => Hash))
+          end
+        end
+        args
       end
   end
 end

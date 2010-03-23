@@ -1,7 +1,8 @@
-== 0.4.1
+== 0.5.0
 
-* 1 major enhancement
+* 2 major enhancements
   * Added 'accept_nil' option.
+  * Added 'append_hash' options.
 
 == 0.4.0 2010-03-21
 
