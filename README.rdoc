@@ -24,14 +24,14 @@ return 'nil' instead of the declared output, you need to wrap your final ruby 'e
 
  # signature is made of [method, arg_class, arg_class, ...]
  class Node
-   include RubyLess::SafeClass
+   include RubyLess
    safe_method [:ancestor?, Node] => Boolean
  end
 
  # methods defined in helper
 
  # global methods
- include RubyLess::SafeClass
+ include RubyLess
  safe_method :prev => {:class => Dummy, :method => 'previous', :nil => true}
  safe_method :node => lambda {|h| {:class => h.context[:node_class], :method => h.context[:node]}}
  safe_method [:strftime, Time, String] => String

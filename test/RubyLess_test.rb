@@ -2,7 +2,7 @@ require 'date'
 require 'test_helper'
 
 class StringDictionary
-  include RubyLess::SafeClass
+  include RubyLess
   safe_method ['[]', Symbol] => {:class => String, :nil => true}
   disable_safe_read
 end
@@ -14,7 +14,7 @@ end
 class RubyLessTest < Test::Unit::TestCase
   attr_reader :context
   yamltest :src_from_title => false
-  include RubyLess::SafeClass
+  include RubyLess
   safe_method :prev => {:class => Dummy, :method => 'previous'}
   safe_method :main => {:class => Dummy, :method => '@node'}
   safe_method :node => lambda {|h, s| {:class => h.context[:node_class], :method => h.context[:node]}}

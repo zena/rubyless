@@ -11,6 +11,17 @@ require 'ruby_less/safe_class'
 require 'ruby_less/processor'
 
 module RubyLess
+  def self.included(base)
+    base.class_eval do
+      include SafeClass
+    end
+  end
+
+  # Return method type (options) if the given signature is a safe method for the class.
+  def self.safe_method_type_for(klass, signature)
+    SafeClass.safe_method_type_for(klass, signature)
+  end
+
   def self.translate(string, helper)
     RubyLessProcessor.translate(string, helper)
   end

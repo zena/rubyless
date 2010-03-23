@@ -1,5 +1,5 @@
 module DummyModule
-  include RubyLess::SafeClass
+  include RubyLess
   safe_method :maze => {:class => String, :method => 'mazette'}
 
   def mazette

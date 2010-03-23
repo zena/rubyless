@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/property_column'
 
 class Dummy < RubyLess::ActiveRecordMock
   include DummyModule
-  include RubyLess::SafeClass
+  include RubyLess
 
   attr_reader :name
 

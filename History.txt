@@ -1,8 +1,9 @@
 == 0.5.0
 
-* 2 major enhancements
+* 3 major enhancements
   * Added 'accept_nil' option.
   * Added 'append_hash' options.
+  * RubyLess activation is now enabled with 'include RubyLess' (no need for SafeClass).
 
 == 0.4.0 2010-03-21
 
