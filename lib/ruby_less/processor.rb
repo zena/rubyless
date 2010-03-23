@@ -292,15 +292,15 @@ module RubyLess
 
         if append_hash = opts[:append_hash]
           last_arg = args.list.last
-          if last_arg.klass.kind_of?(Hash)
-            append_hash.each do |key, value|
-              last_arg.set_hash(key, value)
-            end
-            last_arg.rebuild_hash
-            args.rebuild_arguments
-          else
-            args.append_argument(t(append_hash.inspect, :class => Hash))
+          unless last_arg.klass.kind_of?(Hash)
+            last_arg = t "", String
+            args.append_argument(last_arg)
           end
+          append_hash.each do |key, value|
+            last_arg.set_hash(key, value)
+          end
+          last_arg.rebuild_hash
+          args.rebuild_arguments
         end
         args
       end

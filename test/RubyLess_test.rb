@@ -38,6 +38,7 @@ class RubyLessTest < Test::Unit::TestCase
 
   safe_method [:hash_args, {'age' => Number, 'name' => String}] => String
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
+  safe_method [:append_hash, Number] => :make_append_hash
 
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
@@ -54,7 +55,7 @@ class RubyLessTest < Test::Unit::TestCase
   end
 
   def make_append_hash(signature)
-    {:class => Number, :append_hash => {:xyz => RubyLess::TypedString.new('"bar"', :class => String)}, :method => 'add'}
+    {:class => Number, :append_hash => {:xyz => RubyLess::TypedString.new('bar', :class => Dummy)}, :method => 'add'}
   end
 
   def accept_nil(foo, bar=nil)

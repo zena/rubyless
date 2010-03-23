@@ -8,7 +8,11 @@ hash_access:
 
 append_hash:
   src: "append_hash(5, 'foo' => 'Foo')"
-  tem: "add(5, {\"foo\" => \"Foo\", :xyz => \"bar\"})"
+  tem: "add(5, {\"foo\" => \"Foo\", :xyz => bar})"
+
+append_hash_on_empty:
+  src: "append_hash(5)"
+  tem: "add(5, {:xyz => bar})"
 
 hash_arguments:
   src: "hash_args('name' => str, 'age' => 13)"
