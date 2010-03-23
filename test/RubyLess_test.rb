@@ -32,6 +32,10 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method :sub => SubDummy
   safe_method :str => SubString
 
+  safe_method [:accept_nil, String] => {:class => String, :accept_nil => true}
+  safe_method [:accept_nil, String, String] => {:class => String, :accept_nil => true}
+  safe_method [:no_nil, String] => String
+
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
     unless res = super
@@ -44,6 +48,18 @@ class RubyLessTest < Test::Unit::TestCase
       end
     end
     res
+  end
+
+  def accept_nil(foo, bar=nil)
+    [foo, bar].inspect
+  end
+
+  def no_nil(foo)
+    foo
+  end
+
+  def get_dict
+    {:foo => 'Foo'}
   end
 
   def contextual_method(signature)

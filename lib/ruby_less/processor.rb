@@ -220,8 +220,24 @@ module RubyLess
           opts = get_method(nil, signature)
           method = opts[:method]
           args = args_with_prepend(args, opts)
-          args = "(#{args.raw})" if args
-          t_if cond, "#{method}#{args}", opts
+          if opts[:accept_nil]
+            if args
+              args = args.list.map do |arg|
+                if !arg.could_be_nil? || arg.raw == arg.cond.to_s
+                  arg.raw
+                else
+                  "(#{arg.cond} ? #{arg.raw} : nil)"
+                end
+              end.join(', ')
+
+              t "#{method}(#{args})", opts
+            else
+              t method, opts
+            end
+          else
+            args = "(#{args.raw})" if args
+            t_if cond, "#{method}#{args}", opts
+          end
         end
       end
 

@@ -139,3 +139,31 @@ match_on_subclass:
 optional_argument_subclass:
   src: "width(:mode => str)"
   tem: "node.width({:mode => str})"
+
+simple_accept_nil:
+  src: "accept_nil(dictionary[:foo])"
+  tem: "accept_nil(get_dict[:foo])"
+
+accept_nil_many_arguments:
+  src: "accept_nil(dictionary[:foo], dictionary[:bar])"
+  tem: "accept_nil(get_dict[:foo], get_dict[:bar])"
+  res: "[\"Foo\", nil]"
+
+accept_nil_many_arguments_no_all_nil:
+  src: "accept_nil('hop', dictionary[:bar])"
+  tem: "accept_nil(\"hop\", get_dict[:bar])"
+  res: "[\"hop\", nil]"
+
+no_nil_in_accept_nil:
+  src: "accept_nil(no_nil(dictionary[:foo]))"
+  tem: "accept_nil((get_dict[:foo] ? no_nil(get_dict[:foo]) : nil))"
+  res: "[\"Foo\", nil]"
+  
+two_no_nil_in_accept_nil:
+  src: "accept_nil(no_nil(dictionary[:foo]), no_nil(dictionary[:bar]))"
+  tem: "accept_nil((get_dict[:foo] ? no_nil(get_dict[:foo]) : nil), (get_dict[:bar] ? no_nil(get_dict[:bar]) : nil))"
+  res: "[\"Foo\", nil]"
+
+accept_nil_in_no_nil:
+  src: "no_nil(accept_nil(dictionary[:foo]))"
+  tem: "no_nil(accept_nil(get_dict[:foo]))"

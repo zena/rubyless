@@ -1,6 +1,11 @@
+== 0.4.1
+
+* 1 major enhancement
+  * Added 'accept_nil' option.
+
 == 0.4.0 2010-03-21
 
-* 4 major enhancement
+* 4 major enhancements
   * Parsing inheritance tree to get safe_method_type.
   * Instance variable (ivar) support (declared as safe_methods).
   * Added support for prepend variables to tranform methods like link("foo") to link(@node, "foo").
