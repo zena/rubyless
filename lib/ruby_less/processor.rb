@@ -203,7 +203,7 @@ module RubyLess
           method = opts[:method]
           args = args_with_prepend(args, opts)
 
-          if (proc = opts[:literal_args]) && !args.list.detect {|a| !a.literal}
+          if (proc = opts[:pre_processor]) && !args.list.detect {|a| !a.literal}
             res = proc.call(*args.list.map(&:literal))
             return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
           end
@@ -234,14 +234,20 @@ module RubyLess
       end
 
       def method_call_with_receiver(receiver, args, opts, cond)
+        method = opts[:method]
+        arg_list = args ? args.list : []
+
         if receiver.could_be_nil?
           cond += receiver.cond
-        elsif receiver.literal && (proc = opts[:literal_args]) && !args.list.detect {|a| !a.literal}
-          res = proc.call([receiver.literal] + args.list.map(&:literal))
+        elsif receiver.literal && (proc = opts[:pre_processor]) && !arg_list.detect {|a| !a.literal}
+          if proc.kind_of?(Proc)
+            res = proc.call([receiver.literal] + arg_list.map(&:literal))
+          else
+            res = receiver.send(*([method] + arg_list.map(&:literal)))
+          end
           return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
         end
 
-        method = opts[:method]
         if method == '/'
           t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
         elsif INFIX_OPERATOR.include?(method)

@@ -17,3 +17,7 @@ concat_static:
 gsub_static:
   src: "'one.one'.gsub(/\\./,';')"
   tem: '"one;one"'
+
+upcase_static:
+  src: "'one.one'.gsub(/\\./,';').upcase"
+  tem: '"ONE;ONE"'

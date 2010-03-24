@@ -24,9 +24,12 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:vowel_count, String]    => Number
   safe_method [:log_info, Dummy, String]    => String
   safe_method :foo => :contextual_method, :bar => :contextual_method
+
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
-  safe_method_for String, [:gsub, Regexp, String] => {:class => String, :literal_args => Proc.new {|this, reg, str| this.gsub(reg, str)}}
+  safe_method_for String, [:gsub, Regexp, String] => {:class => String, :pre_processor => Proc.new {|this, reg, str| this.gsub(reg, str)}}
+  safe_method_for String, :upcase => {:class => String, :pre_processor => true}
+
   safe_method_for Time, [:strftime, String] => String
   safe_method :@foo => {:class => Dummy, :method => "node"}
   safe_method :sub => SubDummy
@@ -40,7 +43,7 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
   safe_method [:append_hash, Number] => :make_append_hash
 
-  safe_method [:concat, String, String] => {:class => String, :literal_args => Proc.new{|a,b| a + b }}
+  safe_method [:concat, String, String] => {:class => String, :pre_processor => Proc.new{|a,b| a + b }}
 
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
