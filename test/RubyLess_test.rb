@@ -40,6 +40,8 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
   safe_method [:append_hash, Number] => :make_append_hash
 
+  safe_method [:concat, String, String] => {:class => String, :literal_args => Proc.new{|a,b| a + b }}
+
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
     unless res = super

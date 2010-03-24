@@ -9,3 +9,7 @@ text:
 dynamic_string:
   str: 'one #{name} two'
   tem: '"one #{node.name} two"'
+
+concat_static:
+  src: "concat('hello ', 'World!')"
+  tem: '"hello World!"'

@@ -31,6 +31,11 @@ module RubyLess
     def cond
       @opts[:cond]
     end
+    
+    # Return the literal value (string before inspect, number)
+    def literal
+      @opts[:literal]
+    end
 
     # List of typed_strings that form the argument list. This is only used
     # to resolve nil when the receiver of the arguments accepts nil values.

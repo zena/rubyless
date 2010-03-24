@@ -104,11 +104,12 @@ module RubyLess
 
     def process_lit(exp)
       lit = exp.shift
-      t lit.inspect, get_lit_class(lit.class)
+      t lit.inspect, get_lit_class(lit)
     end
 
     def process_str(exp)
-      t exp.shift.inspect, String
+      lit = exp.shift
+      t lit.inspect, :class => String, :literal => lit
     end
 
     def process_dstr(exp)
@@ -195,46 +196,60 @@ module RubyLess
         end
 
         if receiver
-          if receiver.could_be_nil?
-            cond += receiver.cond
-          end
-          opts = get_method(receiver, signature)
-          method = opts[:method]
-          if method == '/'
-            t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
-          elsif INFIX_OPERATOR.include?(method)
-            t_if cond, "(#{receiver.raw}#{method}#{args.raw})", opts
-          elsif PREFIX_OPERATOR.include?(method)
-            t_if cond, "#{method.to_s[0..0]}#{receiver.raw}", opts
-          elsif method == '[]'
-            t_if cond, "#{receiver.raw}[#{args.raw}]", opts
-          else
-            args = args_with_prepend(args, opts)
-            args = "(#{args.raw})" if args
-            t_if cond, "#{receiver.raw}.#{method}#{args}", opts
-          end
+          method_call_with_receiver(receiver, signature, cond, args)
         else
           opts = get_method(nil, signature)
           method = opts[:method]
           args = args_with_prepend(args, opts)
-          if opts[:accept_nil]
-            if args
-              args = args.list.map do |arg|
-                if !arg.could_be_nil? || arg.raw == arg.cond.to_s
-                  arg.raw
-                else
-                  "(#{arg.cond} ? #{arg.raw} : nil)"
-                end
-              end.join(', ')
 
-              t "#{method}(#{args})", opts
-            else
-              t method, opts
-            end
+          if (proc = opts[:literal_args]) && !args.list.detect {|a| !a.literal}
+            res = proc.call(*args.list.map(&:literal))
+            return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
+          end
+
+          if opts[:accept_nil]
+            method_call_accepting_nil(method, args, opts)
           else
             args = "(#{args.raw})" if args
             t_if cond, "#{method}#{args}", opts
           end
+        end
+      end
+
+      def method_call_accepting_nil(method, args, opts)
+        if args
+          args = args.list.map do |arg|
+            if !arg.could_be_nil? || arg.raw == arg.cond.to_s
+              arg.raw
+            else
+              "(#{arg.cond} ? #{arg.raw} : nil)"
+            end
+          end.join(', ')
+
+          t "#{method}(#{args})", opts
+        else
+          t method, opts
+        end
+      end
+
+      def method_call_with_receiver(receiver, signature, cond, args)
+        if receiver.could_be_nil?
+          cond += receiver.cond
+        end
+        opts = get_method(receiver, signature)
+        method = opts[:method]
+        if method == '/'
+          t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
+        elsif INFIX_OPERATOR.include?(method)
+          t_if cond, "(#{receiver.raw}#{method}#{args.raw})", opts
+        elsif PREFIX_OPERATOR.include?(method)
+          t_if cond, "#{method.to_s[0..0]}#{receiver.raw}", opts
+        elsif method == '[]'
+          t_if cond, "#{receiver.raw}[#{args.raw}]", opts
+        else
+          args = args_with_prepend(args, opts)
+          args = "(#{args.raw})" if args
+          t_if cond, "#{receiver.raw}.#{method}#{args}", opts
         end
       end
 
@@ -271,23 +286,21 @@ module RubyLess
         type[:class].kind_of?(Proc) ? type[:class].call(@helper, signature) : type
       end
 
-      def get_lit_class(klass)
-        unless lit_class = RubyLess::SafeClass.literal_class_for(klass)
+      def get_lit_class(lit)
+        unless lit_class = RubyLess::SafeClass.literal_class_for(lit.class)
           raise RubyLess::SyntaxError.new("#{klass} literal not supported by RubyLess.")
         end
-        lit_class
+        {:class => lit_class, :literal => lit}
       end
 
       def args_with_prepend(args, opts)
-        args = if prepend_args = opts[:prepend_args]
+        if prepend_args = opts[:prepend_args]
           if args
             prepend_args.append_argument(args)
-            prepend_args
+            args = prepend_args
           else
-            prepend_args
+            args = prepend_args
           end
-        else
-          args
         end
 
         if append_hash = opts[:append_hash]
