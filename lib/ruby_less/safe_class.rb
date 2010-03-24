@@ -193,7 +193,7 @@ module RubyLess
     end
 
     # Safe attribute reader used when 'safe_readable?' could not be called because the class
-    # is not known during compile time.
+    # is not known during compile time. FIXME: Is this used anymore ?
     def safe_read(key)
       return "'#{key}' not readable" unless type = self.class.safe_method_type([key])
       self.send(type[:method])

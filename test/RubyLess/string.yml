@@ -13,3 +13,7 @@ dynamic_string:
 concat_static:
   src: "concat('hello ', 'World!')"
   tem: '"hello World!"'
+
+gsub_static:
+  src: "'one.one'.gsub(/\\./,';')"
+  tem: '"one;one"'

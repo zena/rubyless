@@ -196,7 +196,8 @@ module RubyLess
         end
 
         if receiver
-          method_call_with_receiver(receiver, signature, cond, args)
+          opts = get_method(receiver, signature)
+          method_call_with_receiver(receiver, args, opts, cond)
         else
           opts = get_method(nil, signature)
           method = opts[:method]
@@ -232,11 +233,14 @@ module RubyLess
         end
       end
 
-      def method_call_with_receiver(receiver, signature, cond, args)
+      def method_call_with_receiver(receiver, args, opts, cond)
         if receiver.could_be_nil?
           cond += receiver.cond
+        elsif receiver.literal && (proc = opts[:literal_args]) && !args.list.detect {|a| !a.literal}
+          res = proc.call([receiver.literal] + args.list.map(&:literal))
+          return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
         end
-        opts = get_method(receiver, signature)
+
         method = opts[:method]
         if method == '/'
           t_if cond, "(#{receiver.raw}#{method}#{args.raw} rescue nil)", opts.merge(:nil => true)
