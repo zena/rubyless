@@ -243,7 +243,7 @@ module RubyLess
           if proc.kind_of?(Proc)
             res = proc.call([receiver.literal] + arg_list.map(&:literal))
           else
-            res = receiver.send(*([method] + arg_list.map(&:literal)))
+            res = receiver.literal.send(*([method] + arg_list.map(&:literal)))
           end
           return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
         end

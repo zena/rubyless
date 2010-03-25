@@ -28,11 +28,11 @@ module RubyLess
 
   def self.translate_string(string, helper)
     if string =~ /\#\{/
-      ::RubyLess.translate("%Q{#{string}}", helper)
+      translate("%Q{#{string}}", helper)
     else
-      string.inspect
+      TypedString.new(string.inspect, :class => String, :literal => string)
     end
   rescue => err
-    raise ::RubyLess::Error.new("Error parsing string \"#{string}\": #{err.message.strip}")
+    raise RubyLess::Error.new("Error parsing string \"#{string}\": #{err.message.strip}")
   end
 end
