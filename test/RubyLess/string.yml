@@ -21,3 +21,8 @@ gsub_static:
 upcase_static:
   src: "'one.one'.gsub(/\\./,';').upcase"
   tem: '"ONE;ONE"'
+
+equal:
+  src: "str == 'str'"
+  tem: '(str=="str")'
+  res: 'true'

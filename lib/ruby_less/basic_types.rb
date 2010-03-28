@@ -12,4 +12,9 @@ RubyLess::SafeClass.safe_method_for( Number,
   [:==, Number] => Boolean, [:< , Number] => Boolean, [:> , Number] => Boolean,
   [:<=, Number] => Boolean, [:>=, Number] => Boolean, [:- , Number] => Number,
   [:+ , Number] => Number,  [:* , Number] => Number,  [:/ , Number] => Number,
-  [:% , Number] => Number,  [:"-@"]       => Number )
+  [:% , Number] => Number,  [:"-@"]       => Number
+)
+
+RubyLess::SafeClass.safe_method_for( String,
+  [:==, String] => Boolean
+)
