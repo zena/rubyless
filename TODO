@@ -1,0 +1,8 @@
+2010-03-28
+
+1. Write shoulda tests for TypedMethod, TypedArray and TypedHash
+2. Create sub-classes of TypedString: TypedMethod, TypedArray, TypedHash
+   A TypedMethod should have a TypedArray as arguments, eventually with a TypedHash as last argument
+3. Move list code from TypedString into TypedArray
+4. Move hash code from TypedString into TypedHash
+

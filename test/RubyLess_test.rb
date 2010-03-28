@@ -41,7 +41,6 @@ class RubyLessTest < Test::Unit::TestCase
 
   safe_method [:hash_args, {'age' => Number, 'name' => String}] => String
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
-  safe_method [:append_hash, Number] => :make_append_hash
 
   safe_method [:concat, String, String] => {:class => String, :pre_processor => Proc.new{|a,b| a + b }}
 
@@ -59,7 +58,7 @@ class RubyLessTest < Test::Unit::TestCase
     res
   end
 
-  def make_append_hash(signature)
+  def make_append_hash(signature = {})
     {:class => Number, :append_hash => {:xyz => RubyLess::TypedString.new('bar', :class => Dummy)}, :method => 'add'}
   end
 

@@ -53,13 +53,22 @@ module RubyLess
       defaults = methods_hash.delete(:defaults) || {}
 
       list = (@@_safe_methods[klass] ||= {})
-      methods_hash.each do |k,v|
-        k, hash_args = build_signature(k)
-        v = {:class => v} unless v.kind_of?(Hash)
-        v = defaults.merge(v)
-        v[:method] = v[:method] ? v[:method].to_s : k.first.to_s
-        v[:hash_args] = hash_args if hash_args
-        list[k] = v
+      methods_hash.each do |signature, type|
+        signature, hash_args = build_signature(signature)
+        type = {:class => type} unless type.kind_of?(Hash)
+        type = defaults.merge(type)
+        type[:method] = type[:method] ? type[:method].to_s : signature.first.to_s
+        if hash_args
+          type[:hash_args] = hash_args
+          list[signature] = type
+          if hash_args.last.kind_of?(Hash)
+            # Also build signature without last hash. This enables the common idiom
+            # method(arg, arg, opts = {})
+            list[signature[0..-2]] = type.dup
+          end
+        else
+          list[signature] = type
+        end
       end
     end
 

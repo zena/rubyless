@@ -5,10 +5,10 @@ module RubyLess
   class TypedString < String
     attr_reader :klass, :opts
 
-    def initialize(content = "", opts = nil)
-      opts ||= {:class => String}
+    def initialize(content = "", klass_or_opts = nil)
+      klass_or_opts ||= {:class => String}
       replace(content)
-      @opts = opts.dup
+      @opts = klass_or_opts.kind_of?(Hash) ? klass_or_opts.dup : {:class => klass_or_opts}
       if could_be_nil? && !@opts[:cond]
         @opts[:cond] = [self.to_s]
       end

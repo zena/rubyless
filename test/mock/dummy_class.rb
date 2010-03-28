@@ -16,8 +16,7 @@ class Dummy < RubyLess::ActiveRecordMock
                :id                  => {:class => Number, :method => :zip},
                :name                => String,
                :foo                 => :bar,
-               [:width, {:mode => String, :type => String, 'nice' => Boolean}] => String,
-               [:width]             => String
+               [:width, {:mode => String, :type => String, 'nice' => Boolean}] => String
   safe_context :spouse  => 'Dummy',
                :husband => {:class => 'Dummy', :context => {:clever => 'no'}}
 
