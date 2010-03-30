@@ -1,12 +1,13 @@
 == 0.5.0
 
-* 6 major enhancements
+* 7 major enhancements
   * Added 'accept_nil' option.
   * Added 'append_hash' options.
   * RubyLess activation is now enabled with 'include RubyLess' (no need for SafeClass).
   * Added support for compile time literal args evaluation.
   * Added support for compile time literal args evaluation on literal objects (strings for example).
   * All method signatures that have an optional hash should accept calls without the last hash.
+  * Better error messages for missing methods.
 
 == 0.4.0 2010-03-21
 

@@ -9,7 +9,7 @@ module RubyLess
     end
 
     def message
-      "#{receiver_with_class}: #{error_message} '#{method_with_arguments}'."
+      "#{error_message} '#{method_with_arguments}' for #{receiver_with_class}."
     end
 
     def error_message
@@ -21,7 +21,8 @@ module RubyLess
     end
 
     def receiver_with_class
-      @receiver ? "#{@receiver} (#{@klass})" : "(#{@klass.class})"
+      klass = @klass.kind_of?(Class) ? @klass : @klass.class
+      @receiver ? "'#{@receiver}' of type #{@klass}" : klass
     end
 
     def method_with_arguments

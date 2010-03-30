@@ -1,10 +1,10 @@
 unknown_global_method:
   src: "system('echo date')"
-  res: "(RubyLessTest): unknown method 'system(String)'."
+  res: "unknown method 'system(String)' for RubyLessTest."
 
 bad_argument_types:
   src: "strftime(34,'ffoo')"
-  res: "(RubyLessTest): unknown method 'strftime(Number, String)'."
+  res: "unknown method 'strftime(Number, String)' for RubyLessTest."
 
 zero_div:
   src: "1/(id-10)"
@@ -17,23 +17,23 @@ looping:
 
 add_two_strings:
   src: "name + 14"
-  res: "node.name (String): unknown method '+(Number)'."
+  res: "unknown method '+(Number)' for 'node.name' of type String."
 
 two_arguments_in_hash:
   src: "dictionary[:one, :two]"
-  res: "get_dict (StringDictionary): unknown method '[](Symbol, Symbol)'."
+  res: "unknown method '[](Symbol, Symbol)' for 'get_dict' of type StringDictionary."
 
 number_argument:
   src: "dictionary[43]"
-  res: "get_dict (StringDictionary): unknown method '[](Number)'."
+  res: "unknown method '[](Number)' for 'get_dict' of type StringDictionary."
 
 string_argument:
   src: "dictionary[spouse.name]"
-  res: "get_dict (StringDictionary): unknown method '[](String)'."
+  res: "unknown method '[](String)' for 'get_dict' of type StringDictionary."
 
 symbol_type_not_used_out_of_helper:
   src: "node.foo"
-  tem: "node (Dummy): unknown method 'foo()'."
+  tem: "unknown method 'foo()' for 'node' of type Dummy."
 
 optional_arguments_with_dynamic_string:
   src: "spouse.width(\"nice#{spouse.name}\" => 'pv')"
@@ -42,12 +42,12 @@ optional_arguments_with_dynamic_string:
 
 optional_arguments_bad_type:
   src: "width(:mode => 12)"
-  res: "(RubyLessTest): unknown method 'width(:mode=>Number)'."
+  res: "unknown method 'width(:mode=>Number)' for RubyLessTest."
 
 optional_arguments_bad_argument:
   src: "width(:xyz => 'pv')"
-  res: "(RubyLessTest): unknown method 'width(:xyz=>String)'."
+  res: "unknown method 'width(:xyz=>String)' for RubyLessTest."
 
 hash_arguments_wrong_type:
   src: "hash_args('name' => 45)"
-  tem: "(RubyLessTest): unknown method 'hash_args(\"name\"=>Number)'."
+  tem: "unknown method 'hash_args(\"name\"=>Number)' for RubyLessTest."
