@@ -1,12 +1,6 @@
 require 'date'
 require 'test_helper'
 
-class StringDictionary
-  include RubyLess
-  safe_method ['[]', Symbol] => {:class => String, :nil => true}
-  disable_safe_read
-end
-
 # Used to test sub-classes in optional arguments
 class SubString < String
 end

@@ -1,7 +1,6 @@
 =begin rdoc
 =end
 require 'ruby_less/info'
-require 'ruby_less/basic_types'
 require 'ruby_less/signature_hash'
 require 'ruby_less/error'
 require 'ruby_less/no_method_error'
@@ -37,3 +36,5 @@ module RubyLess
     raise RubyLess::Error.new("Error parsing string \"#{string}\": #{err.message.strip}")
   end
 end
+
+require 'ruby_less/basic_types'
