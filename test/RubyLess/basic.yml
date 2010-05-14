@@ -154,7 +154,7 @@ no_nil_in_accept_nil:
   src: "accept_nil(no_nil(dictionary[:foo]))"
   tem: "accept_nil((get_dict[:foo] ? no_nil(get_dict[:foo]) : nil))"
   res: "[\"Foo\", nil]"
-  
+
 two_no_nil_in_accept_nil:
   src: "accept_nil(no_nil(dictionary[:foo]), no_nil(dictionary[:bar]))"
   tem: "accept_nil((get_dict[:foo] ? no_nil(get_dict[:foo]) : nil), (get_dict[:bar] ? no_nil(get_dict[:bar]) : nil))"
@@ -163,3 +163,8 @@ two_no_nil_in_accept_nil:
 accept_nil_in_no_nil:
   src: "no_nil(accept_nil(dictionary[:foo]))"
   tem: "no_nil(accept_nil(get_dict[:foo]))"
+
+parse_array:
+  src: "[3, 6]"
+  tem: '[3,6]'
+

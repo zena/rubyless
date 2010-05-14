@@ -51,3 +51,7 @@ optional_arguments_bad_argument:
 hash_arguments_wrong_type:
   src: "hash_args('name' => 45)"
   tem: "unknown method 'hash_args(\"name\"=>Number)' for RubyLessTest."
+
+mixed_array:
+  src: "[3, '4']"
+  tem: 'Mixed Array not supported ([Number,String]).'

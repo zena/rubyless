@@ -78,18 +78,18 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<ruby_parser>, [">= 2.0.4"])
       s.add_runtime_dependency(%q<sexp_processor>, [">= 3.0.1"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
-      s.add_development_dependency(%q<yamltest>, [">= 0.5.3"])
+      s.add_development_dependency(%q<yamltest>, [">= 0.6.0"])
     else
       s.add_dependency(%q<ruby_parser>, [">= 2.0.4"])
       s.add_dependency(%q<sexp_processor>, [">= 3.0.1"])
       s.add_dependency(%q<shoulda>, [">= 0"])
-      s.add_dependency(%q<yamltest>, [">= 0.5.3"])
+      s.add_dependency(%q<yamltest>, [">= 0.6.0"])
     end
   else
     s.add_dependency(%q<ruby_parser>, [">= 2.0.4"])
     s.add_dependency(%q<sexp_processor>, [">= 3.0.1"])
     s.add_dependency(%q<shoulda>, [">= 0"])
-    s.add_dependency(%q<yamltest>, [">= 0.5.3"])
+    s.add_dependency(%q<yamltest>, [">= 0.6.0"])
   end
 end
 

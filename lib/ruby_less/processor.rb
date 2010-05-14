@@ -12,6 +12,8 @@ module RubyLess
     def self.translate(string, helper)
       sexp = RubyParser.new.parse(string)
       self.new(helper).process(sexp)
+    rescue Racc::ParseError => err
+      raise RubyLess::SyntaxError.new(err.message)
     end
 
     def initialize(helper)
@@ -86,8 +88,22 @@ module RubyLess
     end
 
     def process_array(exp)
-      res = process_arglist(exp)
-      exp.size > 1 ? t("[#{res}]", res.opts) : res
+      literal = true
+      list    = []
+      classes = []
+      while !exp.empty?
+        res = process(exp.shift)
+        content_class ||= res.opts[:class]
+        unless res.opts[:class] <= content_class
+          classes = list.map { content_class.name } + [res.opts[:class].name]
+          raise RubyLess::Error.new("Mixed Array not supported ([#{classes * ','}]).")
+        end
+        list << res
+      end
+
+      res.opts[:class] = Array
+      res.opts[:array_content_class] = content_class
+      t "[#{list * ','}]", res.opts.merge(:literal => nil)
     end
 
     def process_vcall(exp)

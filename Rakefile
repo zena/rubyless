@@ -16,7 +16,7 @@ begin
     gem.add_dependency 'ruby_parser', '>= 2.0.4'
     gem.add_dependency 'sexp_processor', '>= 3.0.1'
     gem.add_development_dependency "shoulda", ">= 0"
-    gem.add_development_dependency "yamltest", ">= 0.5.3"
+    gem.add_development_dependency "yamltest", ">= 0.6.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
