@@ -168,3 +168,11 @@ parse_array:
   src: "[3, 6]"
   tem: '[3,6]'
 
+noop_method:
+  src: 'no_op("hello")'
+  tem: '("hello")'
+  res: 'hello'
+
+noop_other_signature:
+  src: 'no_op(45)'
+  tem: 'transform(45)'

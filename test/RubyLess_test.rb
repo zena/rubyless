@@ -25,6 +25,7 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method_for String, :upcase => {:class => String, :pre_processor => true}
 
   safe_method_for Time, [:strftime, String] => String
+
   safe_method :@foo => {:class => Dummy, :method => "node"}
   safe_method :sub => SubDummy
   safe_method :str => SubString
@@ -32,6 +33,9 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:accept_nil, String] => {:class => String, :accept_nil => true}
   safe_method [:accept_nil, String, String] => {:class => String, :accept_nil => true}
   safe_method [:no_nil, String] => String
+
+  safe_method [:no_op, String] => {:class => String, :method => ''}
+  safe_method [:no_op, Number] => {:class => String, :method => 'transform'}
 
   safe_method [:hash_args, {'age' => Number, 'name' => String}] => String
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
