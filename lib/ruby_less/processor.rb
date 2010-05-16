@@ -220,7 +220,12 @@ module RubyLess
           args = args_with_prepend(args, opts)
 
           if (proc = opts[:pre_processor]) && !args.list.detect {|a| !a.literal}
-            res = proc.call(*args.list.map(&:literal))
+            if proc.kind_of?(Proc)
+              res = proc.call(*args.list.map(&:literal))
+            else
+              res = @helper.send(proc, *args.list.map(&:literal))
+            end
+
             return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
           end
 

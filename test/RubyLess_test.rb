@@ -41,6 +41,7 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
 
   safe_method [:concat, String, String] => {:class => String, :pre_processor => Proc.new{|a,b| a + b }}
+  safe_method [:find, String] => {:class => NilClass, :method => 'nil', :pre_processor => :build_finder}
 
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
@@ -58,6 +59,10 @@ class RubyLessTest < Test::Unit::TestCase
 
   def make_append_hash(signature = {})
     {:class => Number, :append_hash => {:xyz => RubyLess::TypedString.new('bar', :class => Dummy)}, :method => 'add'}
+  end
+
+  def build_finder(string)
+    TypedString.new("secure(Node) { Node.find(#{string.inspect}) }", :class => Dummy )
   end
 
   def accept_nil(foo, bar=nil)

@@ -176,3 +176,8 @@ noop_method:
 noop_other_signature:
   src: 'no_op(45)'
   tem: 'transform(45)'
+
+build_finder:
+  # This test shows a way to 'pre_process' literal content with a helper method that should return a TypedString
+  src: 'find("one two")'
+  tem: 'secure(Node) { Node.find("one two") }'

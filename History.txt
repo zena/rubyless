@@ -9,6 +9,7 @@
   * All method signatures that have an optional hash should accept calls without the last hash.
   * Better error messages for missing methods.
   * Added support for Array with Mixed array detection.
+  * Added support for pre_processing with helper method.
 
 == 0.4.0 2010-03-21
 
