@@ -213,7 +213,7 @@ module RubyLess
 
         if receiver
           opts = get_method(receiver, signature)
-          method_call_with_receiver(receiver, args, opts, cond)
+          method_call_with_receiver(receiver, args, opts, cond, signature)
         else
           opts = get_method(nil, signature)
           method = opts[:method]
@@ -254,11 +254,12 @@ module RubyLess
         end
       end
 
-      def method_call_with_receiver(receiver, args, opts, cond)
+      def method_call_with_receiver(receiver, args, opts, cond, signature)
         method = opts[:method]
         arg_list = args ? args.list : []
 
-        if receiver.could_be_nil?
+        if receiver.could_be_nil? && opts != SafeClass.safe_method_type_for(NilClass, signature)
+          # Do not add a condition if the method applies on nil
           cond += receiver.cond
         elsif receiver.literal && (proc = opts[:pre_processor]) && !arg_list.detect {|a| !a.literal}
           if proc.kind_of?(Proc)

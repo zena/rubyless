@@ -181,3 +181,7 @@ build_finder:
   # This test shows a way to 'pre_process' literal content with a helper method that should return a TypedString
   src: 'find("one two")'
   tem: 'secure(Node) { Node.find("one two") }'
+
+methods_on_nil:
+  src: 'dictionary[:foo].blank?'
+  tem: 'get_dict[:foo].blank?'

@@ -43,6 +43,9 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:concat, String, String] => {:class => String, :pre_processor => Proc.new{|a,b| a + b }}
   safe_method [:find, String] => {:class => NilClass, :method => 'nil', :pre_processor => :build_finder}
 
+  # methods on nil
+  safe_method_for Object, :blank? => Boolean
+
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
     unless res = super

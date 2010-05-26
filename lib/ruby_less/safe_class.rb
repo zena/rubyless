@@ -26,9 +26,10 @@ module RubyLess
           s
         end
       end
+
       # Find safe method in all ancestry
       klass.ancestors.each do |ancestor|
-        return nil if ancestor == RubyLess::SafeClass
+        # FIXME: find a way to optimize this search !
         if type = safe_method_with_hash_args(ancestor, signature, signature_args)
           return type
         end
