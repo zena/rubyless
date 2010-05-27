@@ -1,6 +1,6 @@
-== 0.5.0
+== 0.5.0 2010-05-27
 
-* 7 major enhancements
+* Major enhancements
   * Added 'accept_nil' option.
   * Added 'append_hash' options.
   * RubyLess activation is now enabled with 'include RubyLess' (no need for SafeClass).
@@ -10,6 +10,7 @@
   * Better error messages for missing methods.
   * Added support for Array with Mixed array detection.
   * Added support for pre_processing with helper method.
+  * Added support for method detection on NilClass.
 
 == 0.4.0 2010-03-21
 
