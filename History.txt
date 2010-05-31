@@ -1,3 +1,8 @@
+== 0.6
+
+* Major enhancements
+  * Added 'safe_eval' method
+
 == 0.5.0 2010-05-27
 
 * Major enhancements

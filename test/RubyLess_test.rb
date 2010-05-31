@@ -51,7 +51,7 @@ class RubyLessTest < Test::Unit::TestCase
     unless res = super
       if signature == ['prepend_test', Number]
         res ={:class => Number, :prepend_args => RubyLess::TypedString.new('10', :class => Number), :method => 'add'}
-      elsif res = context[:node_class].safe_method_type(signature)
+      elsif context && res = context[:node_class].safe_method_type(signature)
         # try to execute method in the current var "var.method"
         res = res.call(self, signature) if res.kind_of?(Proc)
         res = res.merge(:method => "#{context[:node]}.#{res[:method] || signature[0]}")
@@ -122,6 +122,14 @@ class RubyLessTest < Test::Unit::TestCase
     type = Dummy.safe_method_type(['husband'])
     type_should_be = {:class => Dummy, :method => 'husband', :nil => true, :context => {:clever => 'no'}}
     assert_equal type_should_be, type
+  end
+
+  def test_safe_eval
+    assert_equal 2, safe_eval("vowel_count('Bp Oil Spill')")
+  end
+
+  def test_safe_eval_bad_arguments
+    assert_raise(RubyLess::NoMethodError) { safe_eval("bad_method('Bp Oil Spill')") }
   end
 
   def yt_do_test(file, test, context = yt_get('context',file,test))
