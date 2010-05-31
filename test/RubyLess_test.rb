@@ -124,14 +124,6 @@ class RubyLessTest < Test::Unit::TestCase
     assert_equal type_should_be, type
   end
 
-  def test_safe_eval
-    assert_equal 2, safe_eval("vowel_count('Bp Oil Spill')")
-  end
-
-  def test_safe_eval_bad_arguments
-    assert_raise(RubyLess::NoMethodError) { safe_eval("bad_method('Bp Oil Spill')") }
-  end
-
   def yt_do_test(file, test, context = yt_get('context',file,test))
     @@test_strings[file][test].keys.each do |key|
       next if ['src', 'context', 'str'].include?(key)

@@ -2,6 +2,7 @@
 
 * Major enhancements
   * Added 'safe_eval' method
+  * Added 'safe_eval_string' method
 
 == 0.5.0 2010-05-27
 

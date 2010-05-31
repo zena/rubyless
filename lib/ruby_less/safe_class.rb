@@ -215,6 +215,12 @@ module RubyLess
       eval(ruby)
     end
 
+    # Evaluate a RubyLess expression. This is just like 'eval' but with safe method checking and typing.
+    def safe_eval_string(code)
+      ruby = RubyLess.translate_string(code, self)
+      eval(ruby)
+    end
+
     private
       def self.build_signature(key)
         keys = key.kind_of?(Array) ? key : [key]
