@@ -73,125 +73,127 @@ module RubyLess
       end
     end
 
+    # Return a safe type from a column
+    def self.safe_method_type_for_column(col, is_property = false)
+      opts = {}
+      opts[:nil]   = col.default.nil?
+      if col.number?
+        opts[:class] = Number
+      elsif col.text?
+        opts[:class] = String
+      else
+        opts[:class] = col.klass
+      end
+      if is_property
+        opts[:method] = "prop['#{col.name.gsub("'",'')}']"
+      else
+        opts[:method] = col.name
+      end
+
+      opts
+    end
+
+    module ClassMethods
+
+      # Declare safe methods. By providing
+      #
+      # The methods hash has the following format:
+      #  signature => return type
+      # or
+      #  signature => options
+      # or
+      #  signature => lambda {|h| ... }
+      #
+      # The lambda expression will be called with @helper as argument during compilation.
+      #
+      # The signature can be either a single symbol or an array containing the method name and type arguments like:
+      #  [:strftime, Time, String]
+      #
+      # If your method accepts variable arguments through a Hash, you should declare it with:
+      #  [:img, String, {:mode => String, :max_size => Number}]
+      #
+      # Make sure your literal values are of the right type: +:mode+ and +'mode'+ are not the same here.
+      #
+      # If the signature is :defaults, the options defined are used as defaults for the other elements defined in the
+      # same call.
+      #
+      # The return type can be a string with the class name or a class.
+      #
+      # Options are:
+      # :class  the return type (class name)
+      # :nil    set this to true if the method could return nil
+      def safe_method(methods_hash)
+        RubyLess::SafeClass.safe_method_for(self, methods_hash)
+      end
+
+      # A safe context is simply a safe method that can return nil in some situations. The rest of the
+      # syntax is the same as #safe_method. We call it a safe context because it enables syntaxes such
+      # as: if var = my_context(...) ---> enter context.
+      def safe_context(methods_hash)
+        methods_hash[:defaults] ||= {}
+        methods_hash[:defaults][:nil] = true
+        safe_method(methods_hash)
+      end
+
+      def safe_literal_class(hash)
+        RubyLess::SafeClass.safe_literal_class(hash)
+      end
+
+      # Declare a safe method to access a list of attributes.
+      # This method should only be used when the class is linked with a database table and provides
+      # proper introspection to detect types and the possibility of NULL values.
+      def safe_attribute(*attributes)
+        attributes.each do |att|
+          if col = columns_hash[att.to_s]
+            safe_method att.to_sym => SafeClass.safe_method_type_for_column(col)
+          else
+            puts "Warning: could not declare safe_attribute '#{att}' (No column with this name found in class #{self})"
+          end
+        end
+      end
+
+      # Declare a safe method to access a list of properties.
+      # This method should only be used in conjunction with the Property gem.
+      def safe_property(*properties)
+        columns = schema.columns
+        properties.each do |att|
+          if col = columns[att.to_s]
+            safe_method att.to_sym => SafeClass.safe_method_type_for_column(col, true)
+          else
+            puts "Warning: could not declare safe_property '#{att}' (No property column with this name found in class #{self})"
+          end
+        end
+      end
+
+      # Declare a safe method for a given class
+      def safe_method_for(klass, signature)
+        SafeClass.safe_method_for(klass, signature)
+      end
+
+      # Hash of all safe methods defined for the class.
+      def safe_methods
+        SafeClass.safe_methods_for(self)
+      end
+
+      # Return the type if the given signature corresponds to a safe method for the class.
+      def safe_method_type(signature)
+        SafeClass.safe_method_type_for(self, signature)
+      end
+
+      # Return true if the class is safe (we can call safe_read on its instances)
+      def safe_class?
+        true
+      end
+
+      # Use this if you want to disable 'safe_read'. This is useful if you provided
+      # a mock as return type signature.
+      def disable_safe_read
+        undef_method(:safe_read)
+      end
+    end # ClassMethods
+
     def self.included(base)
-      base.class_eval do
-
-        # Declare safe methods. By providing
-        #
-        # The methods hash has the following format:
-        #  signature => return type
-        # or
-        #  signature => options
-        # or
-        #  signature => lambda {|h| ... }
-        #
-        # The lambda expression will be called with @helper as argument during compilation.
-        #
-        # The signature can be either a single symbol or an array containing the method name and type arguments like:
-        #  [:strftime, Time, String]
-        #
-        # If your method accepts variable arguments through a Hash, you should declare it with:
-        #  [:img, String, {:mode => String, :max_size => Number}]
-        #
-        # Make sure your literal values are of the right type: +:mode+ and +'mode'+ are not the same here.
-        #
-        # If the signature is :defaults, the options defined are used as defaults for the other elements defined in the
-        # same call.
-        #
-        # The return type can be a string with the class name or a class.
-        #
-        # Options are:
-        # :class  the return type (class name)
-        # :nil    set this to true if the method could return nil
-        def self.safe_method(methods_hash)
-          RubyLess::SafeClass.safe_method_for(self, methods_hash)
-        end
-
-        # A safe context is simply a safe method that can return nil in some situations. The rest of the
-        # syntax is the same as #safe_method. We call it a safe context because it enables syntaxes such
-        # as: if var = my_context(...) ---> enter context.
-        def self.safe_context(methods_hash)
-          methods_hash[:defaults] ||= {}
-          methods_hash[:defaults][:nil] = true
-          safe_method(methods_hash)
-        end
-
-        def self.safe_literal_class(hash)
-          RubyLess::SafeClass.safe_literal_class(hash)
-        end
-
-        # Declare a safe method to access a list of attributes.
-        # This method should only be used when the class is linked with a database table and provides
-        # proper introspection to detect types and the possibility of NULL values.
-        def self.safe_attribute(*attributes)
-          attributes.each do |att|
-            if col = columns_hash[att.to_s]
-              opts = {}
-              opts[:nil]   = col.default.nil?
-              if col.number?
-                opts[:class] = Number
-              elsif col.text?
-                opts[:class] = String
-              else
-                opts[:class] = col.klass
-              end
-              safe_method att.to_sym => opts
-            else
-              puts "Warning: could not declare safe_attribute '#{att}' (No column with this name found in class #{self})"
-            end
-          end
-        end
-
-        # Declare a safe method to access a list of properties.
-        # This method should only be used in conjunction with the Property gem.
-        def self.safe_property(*properties)
-          columns = schema.columns
-          properties.each do |att|
-            if col = columns[att.to_s]
-              opts = {}
-              opts[:nil]   = col.default.nil?
-              if col.number?
-                opts[:class] = Number
-              elsif col.text?
-                opts[:class] = String
-              else
-                opts[:class] = col.klass
-              end
-              opts[:method] = "prop['#{att.to_s.gsub("'",'')}']"
-              safe_method att.to_sym => opts
-            else
-              puts "Warning: could not declare safe_property '#{att}' (No property column with this name found in class #{self})"
-            end
-          end
-        end
-
-
-        # Declare a safe method for a given class
-        def self.safe_method_for(klass, signature)
-          SafeClass.safe_method_for(klass, signature)
-        end
-
-        # Hash of all safe methods defined for the class.
-        def self.safe_methods
-          SafeClass.safe_methods_for(self)
-        end
-
-        # Return the type if the given signature corresponds to a safe method for the class.
-        def self.safe_method_type(signature)
-          SafeClass.safe_method_type_for(self, signature)
-        end
-
-        # Return true if the class is safe (we can call safe_read on its instances)
-        def self.safe_class?
-          true
-        end
-
-        # Use this if you want to disable 'safe_read'. This is useful if you provided
-        # a mock as return type signature.
-        def self.disable_safe_read
-          undef_method(:safe_read)
-        end
-      end  # base.class_eval
+      base.extend ClassMethods
     end  # included
 
 
@@ -203,7 +205,8 @@ module RubyLess
     end
 
     # Safe attribute reader used when 'safe_readable?' could not be called because the class
-    # is not known during compile time. FIXME: Is this used anymore ?
+    # is not known during compile time.
+    # FIXME: Is this used anymore ?
     def safe_read(key)
       return "'#{key}' not readable" unless type = self.class.safe_method_type([key])
       self.send(type[:method])

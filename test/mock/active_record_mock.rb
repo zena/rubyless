@@ -4,6 +4,10 @@ module RubyLess
       @opts = opts
     end
 
+    def name
+      @opts[:name]
+    end
+
     def default
       @opts[:default]
     end
@@ -42,10 +46,10 @@ module RubyLess
 
   class ActiveRecordMock
     COLUMNS = {
-      'format' => ColumnMock.new(:default => '%d.%m.%Y', :type   => :text),
-      'age'    => ColumnMock.new(:default => 5,  :type => :float),
-      'friend_id' => ColumnMock.new(:type => :integer),
-      'log_at' => ColumnMock.new(:type => :datetime),
+      'format' => ColumnMock.new(:default => '%d.%m.%Y', :type   => :text, :name => 'format'),
+      'age'    => ColumnMock.new(:default => 5,  :type => :float, :name => 'age'),
+      'friend_id' => ColumnMock.new(:type => :integer, :name => 'friend_id'),
+      'log_at' => ColumnMock.new(:type => :datetime, :name => 'log_at'),
     }
     def self.columns_hash
       COLUMNS
