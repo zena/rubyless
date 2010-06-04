@@ -1,6 +1,6 @@
 empty:
   src: ""
-  tem: null
+  tem: ""
 
 numbers:
   src: "id > 45 and (3 > -id or 3+3)"

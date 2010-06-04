@@ -55,3 +55,7 @@ hash_arguments_wrong_type:
 mixed_array:
   src: "[3, '4']"
   tem: 'Mixed Array not supported ([Number,String]).'
+
+hash_odd_keys_syntax_error:
+  src: '{text}'
+  tem: 'Syntax error'

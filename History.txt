@@ -1,8 +1,9 @@
 == 0.6
 
 * Major enhancements
-  * Added 'safe_eval' method
-  * Added 'safe_eval_string' method
+  * Added 'safe_eval' method.
+  * Added 'safe_eval_string' method.
+  * Better handling of syntax errors.
 
 == 0.5.0 2010-05-27
 

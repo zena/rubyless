@@ -10,8 +10,13 @@ module RubyLess
     PREFIX_OPERATOR   = ['-@']
 
     def self.translate(string, helper)
-      sexp = RubyParser.new.parse(string)
-      self.new(helper).process(sexp)
+      if sexp = RubyParser.new.parse(string)
+        self.new(helper).process(sexp)
+      elsif string.size == 0
+        ''
+      else
+        raise RubyLess::SyntaxError.new("Syntax error")
+      end
     rescue Racc::ParseError => err
       raise RubyLess::SyntaxError.new(err.message)
     end
