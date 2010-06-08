@@ -185,3 +185,12 @@ build_finder:
 methods_on_nil:
   src: 'dictionary[:foo].blank?'
   tem: 'get_dict[:foo].blank?'
+
+equality_on_nil:
+  src: 'dictionary[:foo] == "yo"'
+  tem: '(get_dict[:foo]=="yo")'
+
+or_same_class:
+  src: "vowel_count(dictionary[:bar] || 'aeiou')"
+  tem: 'vowel_count((get_dict[:bar] or "aeiou"))'
+  res: '5'

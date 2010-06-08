@@ -25,3 +25,8 @@ RubyLess::SafeClass.safe_method_for( Number,
 RubyLess::SafeClass.safe_method_for( String,
   [:==, String] => Boolean
 )
+
+RubyLess::SafeClass.safe_method_for( NilClass,
+  [:==, String] => Boolean,
+  [:==, Number] => Boolean
+)

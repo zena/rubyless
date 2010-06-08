@@ -48,7 +48,12 @@ module RubyLess
     end
 
     def process_or(exp)
-      t "(#{process(exp.shift)} or #{process(exp.shift)})", Boolean
+      left, right = process(exp.shift), process(exp.shift)
+      if left.klass == right.klass
+        t "(#{left} or #{right})", :class => right.klass, :nil => right.could_be_nil?
+      else
+        t "(#{left} or #{right})", Boolean
+      end
     end
 
     def process_not(exp)
@@ -263,7 +268,8 @@ module RubyLess
         method = opts[:method]
         arg_list = args ? args.list : []
 
-        if receiver.could_be_nil? && opts != SafeClass.safe_method_type_for(NilClass, signature)
+        if receiver.could_be_nil? &&
+           !(opts == SafeClass.safe_method_type_for(NilClass, signature) && receiver.cond == [receiver])
           # Do not add a condition if the method applies on nil
           cond += receiver.cond
         elsif receiver.literal && (proc = opts[:pre_processor]) && !arg_list.detect {|a| !a.literal}

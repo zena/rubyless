@@ -24,6 +24,12 @@ module RubyLess
 
   def self.translate(string, helper)
     RubyLessProcessor.translate(string, helper)
+  rescue Exception => err
+    if err.kind_of?(RubyLess::Error)
+      raise err
+    else
+      raise RubyLess::Error.new("Error parsing \"#{string}\": #{err.message.strip}")
+    end
   end
 
   def self.translate_string(string, helper)
@@ -32,8 +38,12 @@ module RubyLess
     else
       TypedString.new(string.inspect, :class => String, :literal => string)
     end
-  rescue => err
-    raise RubyLess::Error.new("Error parsing string \"#{string}\": #{err.message.strip}")
+  rescue Exception => err
+    if err.kind_of?(RubyLess::Error)
+      raise err
+    else
+      raise RubyLess::Error.new("Error parsing string \"#{string}\": #{err.message.strip}")
+    end
   end
 end
 

@@ -59,3 +59,7 @@ mixed_array:
 hash_odd_keys_syntax_error:
   src: '{text}'
   tem: 'Syntax error'
+
+syntax_error:
+  src: "3 * / * 5"
+  tem: "/nterminated string meets end of file/"
