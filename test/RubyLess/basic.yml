@@ -194,3 +194,11 @@ or_same_class:
   src: "vowel_count(dictionary[:bar] || 'aeiou')"
   tem: 'vowel_count((get_dict[:bar] or "aeiou"))'
   res: '5'
+
+class:
+  src: "@foo.kind_of?(Page)"
+  tem: "node.kind_of?(Page)"
+
+class_map_as_string:
+  src: "@foo.kind_of?(Document)"
+  tem: "node.is_like?(\"DOC\")"

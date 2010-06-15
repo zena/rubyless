@@ -48,6 +48,16 @@ class RubyLessTest < Test::Unit::TestCase
   # methods on nil
   safe_method_for Object, :blank? => Boolean
 
+  def safe_const_type(constant)
+    if constant == 'Page'
+      {:method => 'Page', :class => Class}
+    elsif constant =~ /^D/
+      {:method => constant[0..2].upcase.inspect, :class => String, :literal => constant}
+    else
+      nil
+    end
+  end
+
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature)
     unless res = super

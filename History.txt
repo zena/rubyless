@@ -4,6 +4,7 @@
   * Added 'safe_eval' method.
   * Added 'safe_eval_string' method.
   * Better handling of syntax errors.
+  * Support for constants.
 
 * Minor enhancements
   * Added safe methods on Time (compare, add/subtract number).

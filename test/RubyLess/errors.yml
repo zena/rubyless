@@ -67,3 +67,11 @@ syntax_error:
 no_lasagna_in_rubyless:
   src: "foo = system"
   tem: "'lasgn' not available in RubyLess."
+
+call_on_class:
+  src: "Page.name"
+  tem: "unknown method 'name()' for 'Page' of type Class."
+
+unknown_constant:
+  src: "RubyLess"
+  tem: "Unknown constant 'RubyLess'."

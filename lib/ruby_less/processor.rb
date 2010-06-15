@@ -43,6 +43,15 @@ module RubyLess
       # send("process_#{method}", exp)
     end
 
+    def process_const(exp)
+      const_name = exp.pop.to_s
+      if opts = @helper.respond_to?(:safe_const_type) ? @helper.safe_const_type(const_name) : nil
+        t opts[:method], opts
+      else
+        raise RubyLess::Error.new("Unknown constant '#{const_name}'.")
+      end
+    end
+
     def process_and(exp)
       t "(#{process(exp.shift)} and #{process(exp.shift)})", Boolean
     end
@@ -119,7 +128,7 @@ module RubyLess
     def process_vcall(exp)
       var_name = exp.shift
       unless opts = get_method([var_name], @helper, false)
-        raise RubyLess::NoMethodError.new("Unknown variable or method '#{var_name}'.")
+        raise RubyLess::Error.new("Unknown variable or method '#{var_name}'.")
       end
       method = opts[:method]
       if args = opts[:prepend_args]
