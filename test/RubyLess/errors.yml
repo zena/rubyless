@@ -63,3 +63,7 @@ hash_odd_keys_syntax_error:
 syntax_error:
   src: "3 * / * 5"
   tem: "/nterminated string meets end of file/"
+
+no_lasagna_in_rubyless:
+  src: "foo = system"
+  tem: "'lasgn' not available in RubyLess."

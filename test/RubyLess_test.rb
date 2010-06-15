@@ -26,6 +26,8 @@ class RubyLessTest < Test::Unit::TestCase
 
   safe_method_for Time, [:strftime, String] => String
 
+  safe_method :now => {:method => 'Time.now', :class => Time}
+
   safe_method :@foo => {:class => Dummy, :method => "node"}
   safe_method :sub => SubDummy
   safe_method :str => SubString

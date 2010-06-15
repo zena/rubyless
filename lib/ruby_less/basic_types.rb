@@ -22,6 +22,12 @@ RubyLess::SafeClass.safe_method_for( Number,
   [:% , Number] => Number,  [:"-@"]       => Number
 )
 
+RubyLess::SafeClass.safe_method_for( Time,
+  [:==, Time] => Boolean, [:< , Time] => Boolean, [:> , Time] => Boolean,
+  [:<=, Time] => Boolean, [:>=, Time] => Boolean,
+  [:- , Number] => Time,  [:+ , Number] => Time
+)
+
 RubyLess::SafeClass.safe_method_for( String,
   [:==, String] => Boolean
 )

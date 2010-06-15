@@ -1,0 +1,15 @@
+minus:
+  src: "now - 4"
+  tem: "(Time.now-4)"
+
+plus:
+  src: "now + 2* 3600"
+  tem: "(Time.now+(2*3600))"
+  
+compare:
+  src: "now == now"
+  tem: "(Time.now==Time.now)"
+  
+compare:
+  src: "now > now"
+  tem: "(Time.now>Time.now)"

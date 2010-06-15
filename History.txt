@@ -5,6 +5,9 @@
   * Added 'safe_eval_string' method.
   * Better handling of syntax errors.
 
+* Minor enhancements
+  * Added safe methods on Time (compare, add/subtract number).
+
 == 0.5.0 2010-05-27
 
 * Major enhancements
