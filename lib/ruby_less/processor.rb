@@ -85,17 +85,15 @@ module RubyLess
     end
 
     def process_call(exp)
-      receiver_node_type = exp.first.nil? ? nil : exp.first.first
-      receiver = process exp.shift
-
-      # receiver = t("(#{receiver})", receiver.klass) if
-      #   Ruby2Ruby::ASSIGN_NODES.include? receiver_node_type
+      unless receiver = process(exp.shift)
+        receiver = @helper.kind_of?(TypedString) ? @helper : nil
+      end
 
       method_call(receiver, exp)
     end
 
     def process_fcall(exp)
-      method_call(nil, exp)
+      method_call(@helper.kind_of?(TypedString) ? @helper : nil, exp)
     end
 
     def process_arglist(exp)
@@ -125,9 +123,10 @@ module RubyLess
       t "[#{list * ','}]", res.opts.merge(:literal => nil)
     end
 
+    # Is this used ?
     def process_vcall(exp)
       var_name = exp.shift
-      unless opts = get_method([var_name], @helper, false)
+      unless opts = get_method(nil, [var_name])
         raise RubyLess::Error.new("Unknown variable or method '#{var_name}'.")
       end
       method = opts[:method]

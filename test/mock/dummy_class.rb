@@ -44,7 +44,16 @@ class Dummy < RubyLess::ActiveRecordMock
     }
   end
   # Mock Property ================= ]
+
   safe_property  :dog_name, :dog_age
+
+  def self.safe_method_type(signature, receiver = nil)
+    if signature == ['talk']
+      {:class => String, :method => "says('#{receiver.opts[:message]}')"}
+    else
+      super
+    end
+  end
 
   def width(opts = {})
     return 'nice!' if opts['nice']

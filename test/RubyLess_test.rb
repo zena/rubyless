@@ -131,6 +131,11 @@ class RubyLessTest < Test::Unit::TestCase
     assert_equal type_should_be, type
   end
 
+  def test_translate_with_typed_string
+    typed_string = RubyLess::TypedString.new('marsupilami', :class => SubDummy, :message => 'Hello')
+    assert_equal "marsupilami.says('Hello')", RubyLess.translate('talk', typed_string)
+  end
+
   def yt_do_test(file, test, context = yt_get('context',file,test))
     @@test_strings[file][test].keys.each do |key|
       next if ['src', 'context', 'str'].include?(key)

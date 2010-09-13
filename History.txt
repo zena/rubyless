@@ -1,7 +1,8 @@
 == 0.7.0 2010-09-13
 
 * Major enhancements
-  * Enable contextual method resolution by passing the receiver in method resolution
+  * Enable contextual method resolution by passing the receiver in method resolution.
+  * Enable translation starting with a TypedString: RubyLess.translate(method, typed_string)
 
 == 0.6.0 2010-07-22
 
