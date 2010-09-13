@@ -11,7 +11,6 @@ end
 class StringDictionary
   include RubyLess
   safe_method ['[]', Symbol] => {:class => String, :nil => true}
-  disable_safe_read # ?
 end
 
 RubyLess::SafeClass.safe_literal_class Fixnum => Number, Float => Number, Symbol => Symbol, Regexp => Regexp

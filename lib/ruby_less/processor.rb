@@ -328,7 +328,7 @@ module RubyLess
       def get_method(receiver, signature)
         klass = receiver ? receiver.klass : @helper
 
-        type = klass.respond_to?(:safe_method_type) ? klass.safe_method_type(signature) : SafeClass.safe_method_type_for(klass, signature)
+        type = klass.respond_to?(:safe_method_type) ? klass.safe_method_type(signature, receiver) : SafeClass.safe_method_type_for(klass, signature)
 
         if type.nil?
           # We try to match with the superclass of the arguments

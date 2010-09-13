@@ -59,7 +59,7 @@ class RubyLessTest < Test::Unit::TestCase
   end
 
   # Example to dynamically rewrite method calls during compilation
-  def safe_method_type(signature)
+  def safe_method_type(signature, receiver = nil)
     unless res = super
       if signature == ['prepend_test', Number]
         res ={:class => Number, :prepend_args => RubyLess::TypedString.new('10', :class => Number), :method => 'add'}
@@ -120,14 +120,9 @@ class RubyLessTest < Test::Unit::TestCase
     "[#{obj.name}] #{msg}"
   end
 
-  def test_safe_read
-    assert_equal 10, Dummy.new.safe_read('id')
-    assert_equal "'rm' not readable", Dummy.new.safe_read('rm')
-  end
-
-  def test_disable_safe_read
-    assert Dummy.instance_methods.include?('safe_read')
-    assert !StringDictionary.instance_methods.include?('safe_read')
+  def test_safe_send
+    assert_equal 10, Dummy.new.safe_send('id')
+    assert_equal nil, Dummy.new.safe_send('rm')
   end
 
   def test_safe_method_type

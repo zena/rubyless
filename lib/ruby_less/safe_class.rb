@@ -176,7 +176,7 @@ module RubyLess
       end
 
       # Return the type if the given signature corresponds to a safe method for the class.
-      def safe_method_type(signature)
+      def safe_method_type(signature, receiver = nil)
         SafeClass.safe_method_type_for(self, signature)
       end
 
@@ -184,31 +184,23 @@ module RubyLess
       def safe_class?
         true
       end
-
-      # Use this if you want to disable 'safe_read'. This is useful if you provided
-      # a mock as return type signature.
-      def disable_safe_read
-        undef_method(:safe_read)
-      end
     end # ClassMethods
 
     def self.included(base)
       base.extend ClassMethods
     end  # included
 
-
     # Return the type if the given signature corresponds to a safe method for the object's class.
-    def safe_method_type(signature)
+    def safe_method_type(signature, receiver = nil)
       if type = SafeClass.safe_method_type_for(self.class, signature)
         type[:class].kind_of?(Symbol) ? self.send(type[:class], signature) : type
       end
     end
 
-    # Safe attribute reader used when 'safe_readable?' could not be called because the class
-    # is not known during compile time.
-    # FIXME: Is this used anymore ?
-    def safe_read(key)
-      return "'#{key}' not readable" unless type = self.class.safe_method_type([key])
+    # Safe dynamic method dispatching when the method is not known during compile time. Currently this
+    # only works for methods without arguments.
+    def safe_send(method)
+      return nil unless type = self.class.safe_method_type([method])
       self.send(type[:method])
     end
 
