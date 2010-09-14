@@ -133,7 +133,7 @@ class RubyLessTest < Test::Unit::TestCase
 
   def test_translate_with_typed_string
     typed_string = RubyLess::TypedString.new('marsupilami', :class => SubDummy, :message => 'Hello')
-    assert_equal "marsupilami.says('Hello')", RubyLess.translate('talk', typed_string)
+    assert_equal "marsupilami.says('Hello')", RubyLess.translate(typed_string, 'talk')
   end
 
   def yt_do_test(file, test, context = yt_get('context',file,test))
@@ -148,9 +148,9 @@ class RubyLessTest < Test::Unit::TestCase
     if source = yt_get('str', file, test)
       case key
       when 'tem'
-        source ? RubyLess.translate_string(source, self) : yt_get('tem', file, test)
+        source ? RubyLess.translate_string(self, source) : yt_get('tem', file, test)
       when 'res'
-        eval(source ? RubyLess.translate_string(source, self) : yt_get('tem', file, test)).to_s
+        eval(source ? RubyLess.translate_string(self, source) : yt_get('tem', file, test)).to_s
       when 'sxp'
         RubyParser.new.parse(source).inspect
       else
@@ -159,10 +159,10 @@ class RubyLessTest < Test::Unit::TestCase
     elsif source = yt_get('src', file, test)
       case key
       when 'tem'
-        source ? RubyLess.translate(source, self) : yt_get('tem', file, test)
+        source ? RubyLess.translate(self, source) : yt_get('tem', file, test)
       when 'res'
-        res = RubyLess.translate(source, self)
-        eval(source ? RubyLess.translate(source, self) : yt_get('tem', file, test)).to_s
+        res = RubyLess.translate(self, source)
+        eval(source ? RubyLess.translate(self, source) : yt_get('tem', file, test)).to_s
       when 'sxp'
         RubyParser.new.parse(source).inspect
       else

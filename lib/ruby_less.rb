@@ -22,8 +22,8 @@ module RubyLess
     SafeClass.safe_method_type_for(klass, signature)
   end
 
-  def self.translate(string, helper)
-    RubyLessProcessor.translate(string, helper)
+  def self.translate(receiver, string)
+    RubyLessProcessor.translate(receiver, string)
   rescue Exception => err
     if err.kind_of?(RubyLess::Error)
       raise err
@@ -32,9 +32,9 @@ module RubyLess
     end
   end
 
-  def self.translate_string(string, helper)
+  def self.translate_string(receiver, string)
     if string =~ /\#\{/
-      translate("%Q{#{string}}", helper)
+      translate(receiver, "%Q{#{string}}")
     else
       TypedString.new(string.inspect, :class => String, :literal => string)
     end

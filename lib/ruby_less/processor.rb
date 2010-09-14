@@ -9,9 +9,9 @@ module RubyLess
     INFIX_OPERATOR = ['<=>', '==', '<', '>', '<=', '>=', '-', '+', '*', '/', '%']
     PREFIX_OPERATOR   = ['-@']
 
-    def self.translate(string, helper)
+    def self.translate(receiver, string)
       if sexp = RubyParser.new.parse(string)
-        self.new(helper).process(sexp)
+        self.new(receiver).process(sexp)
       elsif string.size == 0
         ''
       else

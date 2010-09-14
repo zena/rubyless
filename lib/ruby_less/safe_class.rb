@@ -206,13 +206,13 @@ module RubyLess
 
     # Evaluate a RubyLess expression. This is just like 'eval' but with safe method checking and typing.
     def safe_eval(code)
-      ruby = RubyLessProcessor.translate(code, self)
+      ruby = RubyLessProcessor.translate(self, code)
       eval(ruby)
     end
 
     # Evaluate a RubyLess expression. This is just like 'eval' but with safe method checking and typing.
     def safe_eval_string(code)
-      ruby = RubyLess.translate_string(code, self)
+      ruby = RubyLess.translate_string(self, code)
       eval(ruby)
     end
 
