@@ -9,8 +9,17 @@ module RubyLess
         return type
       elsif signature.kind_of?(Array)
         size = signature.size
-        ancestors = signature.map {|k| k.kind_of?(Class) ? k.ancestors : [k]}
-
+        static_types = true
+        ancestors = signature.map do |k|
+          if k.kind_of?(Symbol)
+            [k]
+          elsif k.kind_of?(Class) && k.name != ''
+            k.ancestors
+          else
+            static_types = false
+            k.respond_to?(:ancestors) ? k.ancestors : [k]
+          end
+        end
         each do |key, type|
           next unless key.size == size
           ok = true
@@ -21,8 +30,8 @@ module RubyLess
             end
           end
           if ok
-            # insert in cache
-            self[signature] = type
+            # insert in cache if the signature does not contain dynamic types
+            self[signature] = type if static_types
             return type
           end
         end

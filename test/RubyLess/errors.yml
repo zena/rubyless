@@ -75,3 +75,7 @@ call_on_class:
 unknown_constant:
   src: "RubyLess"
   tem: "Unknown constant 'RubyLess'."
+
+ternary_operator:
+  src: "@foo ? 'xx' : 15"
+  tem: "/Error in conditional expression.*String != Number/"

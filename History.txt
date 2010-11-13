@@ -1,3 +1,9 @@
+== 0.8.0
+
+* Major enhancements
+  * Better resolution when receiving dynamic classes or proxy.
+  * Fixed a bug where anonymous classes would be memoized.
+
 == 0.7.0 2010-09-13
 
 * Major enhancements

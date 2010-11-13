@@ -18,7 +18,9 @@ class Dummy < RubyLess::ActiveRecordMock
                :foo                 => :bar,
                [:width, {:mode => String, :type => String, 'nice' => Boolean}] => String,
                [:kind_of?, Class]   => Boolean,
-               [:kind_of?, String]  => {:method => 'is_like?', :class  => Boolean}
+               [:kind_of?, String]  => {:method => 'is_like?', :class  => Boolean},
+               :author => (Proc.new do |h, s| {:method => 'author', :class => Dummy} end)
+               #:author => {:method => 'author', :class => Dummy}
 
   safe_context :spouse  => 'Dummy',
                :husband => {:class => 'Dummy', :context => {:clever => 'no'}}
@@ -80,6 +82,10 @@ class Dummy < RubyLess::ActiveRecordMock
 
   def zip
     10
+  end
+
+  def author
+    Dummy.new('bob')
   end
 end
 

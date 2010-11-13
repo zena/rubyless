@@ -65,7 +65,7 @@ class RubyLessTest < Test::Unit::TestCase
         res ={:class => Number, :prepend_args => RubyLess::TypedString.new('10', :class => Number), :method => 'add'}
       elsif context && res = context[:node_class].safe_method_type(signature)
         # try to execute method in the current var "var.method"
-        res = res.call(self, signature) if res.kind_of?(Proc)
+        res = res[:class].call(self, signature) if res[:class].kind_of?(Proc)
         res = res.merge(:method => "#{context[:node]}.#{res[:method] || signature[0]}")
       end
     end

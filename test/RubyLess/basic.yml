@@ -202,3 +202,7 @@ class:
 class_map_as_string:
   src: "@foo.kind_of?(Document)"
   tem: "node.is_like?(\"DOC\")"
+
+proc_to_resolve_class:
+  src: "author"
+  tem: "node.author"

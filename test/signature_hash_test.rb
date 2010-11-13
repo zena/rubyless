@@ -40,5 +40,12 @@ class SignatureHashTest < Test::Unit::TestCase
       assert subject.keys.include?(key)
     end
 
+    should 'not cache key on anonymous class match' do
+      key = [:x, Class.new(String), String]
+      assert !subject.keys.include?(key)
+      assert_equal 'x_string_string', subject[key]
+      assert !subject.keys.include?(key)
+    end
+
   end
 end
