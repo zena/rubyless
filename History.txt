@@ -1,4 +1,4 @@
-== 0.8.0
+== 0.8.0 2010-11-15
 
 * Major enhancements
   * Better resolution when receiving dynamic classes or proxy.
