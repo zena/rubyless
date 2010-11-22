@@ -10,7 +10,8 @@ class Dummy < RubyLess::ActiveRecordMock
 
   safe_method  [:ancestor?, Dummy]  => Boolean
   safe_method  :parent              => {:class => 'Dummy', :special_option => 'foobar'},
-               :children            => ['Dummy'],
+               :genitors            => ['Dummy'],
+               :children            => {:class => ['Dummy'], :nil => true},
                :project             => 'Dummy',
                :image               => 'Dummy',
                :id                  => {:class => Number, :method => :zip},

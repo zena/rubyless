@@ -206,3 +206,11 @@ class_map_as_string:
 proc_to_resolve_class:
   src: "author"
   tem: "node.author"
+
+method_on_array:
+  src: "@foo.genitors.size"
+  tem: "node.genitors.size"
+
+method_on_array_with_nil:
+  src: "@foo.children.size"
+  tem: "(node.children ? node.children.size : nil)"
