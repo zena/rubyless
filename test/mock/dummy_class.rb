@@ -20,8 +20,12 @@ class Dummy < RubyLess::ActiveRecordMock
                [:width, {:mode => String, :type => String, 'nice' => Boolean}] => String,
                [:kind_of?, Class]   => Boolean,
                [:kind_of?, String]  => {:method => 'is_like?', :class  => Boolean},
-               :author => (Proc.new do |h, s| {:method => 'author', :class => Dummy} end)
+               # helper, receiver, signature
+               :author => (Proc.new do |h, r, s| {:method => 'author', :class => Dummy} end)
                #:author => {:method => 'author', :class => Dummy}
+
+               # just to test Proc.call
+               safe_method :proc_test =>  Proc.new {|h, r, s| {:class => String, :method => '""', :h => h, :r => r, :s => s}}
 
   safe_context :spouse  => 'Dummy',
                :husband => {:class => 'Dummy', :context => {:clever => 'no'}}

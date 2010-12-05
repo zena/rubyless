@@ -2,7 +2,8 @@
 
 * Major enhancements
   * Added support for Array method on list types.
-  
+  * Changed API for Proc types (we now send 'helper, this, args').
+
 == 0.8.0 2010-11-15
 
 * Major enhancements

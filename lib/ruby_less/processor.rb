@@ -334,7 +334,7 @@ module RubyLess
         end
         raise RubyLess::NoMethodError.new(receiver, klass, signature) if !type || type[:class].kind_of?(Symbol) # we cannot send: no object.
 
-        type[:class].kind_of?(Proc) ? type[:class].call(@helper, signature) : type
+        type[:class].kind_of?(Proc) ? type[:class].call(@helper, receiver ? receiver.klass : @helper, signature) : type
       end
 
       def get_lit_class(lit)

@@ -11,7 +11,7 @@ class RubyLessTest < Test::Unit::TestCase
   include RubyLess
   safe_method :prev => {:class => Dummy, :method => 'previous'}
   safe_method :main => {:class => Dummy, :method => '@node'}
-  safe_method :node => lambda {|h, s| {:class => h.context[:node_class], :method => h.context[:node]}}
+  safe_method :node => Proc.new {|h, r, s| {:class => h.context[:node_class], :method => h.context[:node]}}
   safe_method :now   => {:class => Time,  :method => "Time.now"}
   safe_method :birth => {:class => Time, :method => "Date.parse('2009-06-02 18:44')"}
   safe_method 'dictionary' => {:class => StringDictionary, :method => 'get_dict'}
@@ -173,6 +173,13 @@ class RubyLessTest < Test::Unit::TestCase
     # puts "\n\n#{err.message}"
     # puts err.backtrace
     err.message
+  end
+
+  def test_proc
+    x = RubyLess.translate(self, 'main.proc_test')
+    assert_equal self, x.opts[:h]
+    assert_equal Dummy, x.opts[:r]
+    assert_equal ['proc_test'], x.opts[:s]
   end
 
   yt_make
