@@ -119,7 +119,7 @@ module RubyLess
       end
 
       res.opts[:class] = Array
-      res.opts[:array_content_class] = content_class
+      res.opts[:elem] = content_class
       t "[#{list * ','}]", res.opts.merge(:literal => nil)
     end
 
@@ -229,17 +229,26 @@ module RubyLess
           cond = []
         end
 
+        opts = get_method(receiver, signature)
+
+        # method type can rewrite receiver
+        if opts[:receiver]
+          if receiver
+            receiver = "#{receiver}.#{opts[:receiver]}"
+          else
+            receiver = opts[:receiver]
+          end
+        end
+
         if receiver
-          opts = get_method(receiver, signature)
           method_call_with_receiver(receiver, args, opts, cond, signature)
         else
-          opts = get_method(nil, signature)
           method = opts[:method]
           args = args_with_prepend(args, opts)
 
           if (proc = opts[:pre_processor]) && !args.list.detect {|a| !a.literal}
             if proc.kind_of?(Proc)
-              res = proc.call(*args.list.map(&:literal))
+              res = proc.call(*([receiver] + args.list.map(&:literal)))
             else
               res = @helper.send(proc, *args.list.map(&:literal))
             end
@@ -280,13 +289,27 @@ module RubyLess
            !(opts == SafeClass.safe_method_type_for(NilClass, signature) && receiver.cond == [receiver])
           # Do not add a condition if the method applies on nil
           cond += receiver.cond
-        elsif receiver.literal && (proc = opts[:pre_processor]) && !arg_list.detect {|a| !a.literal}
+          if (proc = opts[:pre_processor]) && !arg_list.detect {|a| !a.literal}
+            # pre-processor on element that can be nil
+            if proc.kind_of?(Proc)
+              res = proc.call([receiver] + arg_list.map(&:literal))
+              return t_if cond, res, res.opts
+            end
+          end
+        elsif (proc = opts[:pre_processor]) && !arg_list.detect {|a| !a.literal}
           if proc.kind_of?(Proc)
-            res = proc.call([receiver.literal] + arg_list.map(&:literal))
-          else
+            res = proc.call([receiver] + arg_list.map(&:literal))
+          elsif receiver.literal
             res = receiver.literal.send(*([method] + arg_list.map(&:literal)))
           end
-          return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
+          if res
+            if res.opts.nil?
+              # This can happen if we use native methods on TypedString (like gsub) that return a new
+              # typedstring without calling initialize....
+              res.instance_variable_set(:@opts, :class => String, :literal => res)
+            end
+            return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
+          end
         end
 
         if method == '/'

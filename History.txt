@@ -1,8 +1,11 @@
-== 0.8.1
+== 0.8.1 2011-01-15
 
 * Major enhancements
   * Added support for Array method on list types.
   * Changed API for Proc types (we now send 'helper, this, args').
+  * Passing receiver on pre_processor resolution.
+  * Enable receiver rewrite.
+  * Added support for pre-processing on elements that can be nil.
 
 == 0.8.0 2010-11-15
 

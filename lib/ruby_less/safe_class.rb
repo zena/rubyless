@@ -15,7 +15,7 @@ module RubyLess
       if klass.kind_of?(Array)
         return safe_method_type_for(Array, signature)
       end
-      
+
       # Signature might be ['name', {:mode => String, :type => Number}].
       # build signature arguments
 

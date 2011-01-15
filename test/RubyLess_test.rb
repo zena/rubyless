@@ -9,6 +9,28 @@ class RubyLessTest < Test::Unit::TestCase
   attr_reader :context
   yamltest :src_from_title => false
   include RubyLess
+
+  # Dynamic resolution of map
+  def self.map_proc
+    @@map_proc ||= Proc.new do |receiver, method|
+      if elem = receiver.opts[:elem] || receiver.klass.first
+        if type = RubyLess::safe_method_type_for(elem, [method.to_s])
+          if type[:method] =~ /\A\w+\Z/
+            res = "#{receiver.raw}.map(&#{type[:method].to_sym.inspect}).compact"
+          else
+            res = "#{receiver.raw}.map{|_map_obj| _map_obj.#{type[:method]}}.compact"
+          end
+          res = RubyLess::TypedString.new(res, :class => [type[:class]])
+        else
+          raise RubyLess::NoMethodError.new(receiver.raw, receiver.klass, ['map', method])
+        end
+      else
+        # should never happen
+        raise RubyLess::NoMethodError.new(receiver.raw, receiver.klass, ['map', method])
+      end
+    end
+  end
+
   safe_method :prev => {:class => Dummy, :method => 'previous'}
   safe_method :main => {:class => Dummy, :method => '@node'}
   safe_method :node => Proc.new {|h, r, s| {:class => h.context[:node_class], :method => h.context[:node]}}
@@ -21,7 +43,18 @@ class RubyLessTest < Test::Unit::TestCase
 
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
-  safe_method_for String, [:gsub, Regexp, String] => {:class => String, :pre_processor => Proc.new {|this, reg, str| this.gsub(reg, str)}}
+  safe_method_for String, [:to_i] => {:class => Number, :pre_processor => true}
+  safe_method_for String, [:gsub, Regexp, String] => {:class => String, :pre_processor => Proc.new {|this, reg, str|
+    # We have to test if 'this' is a literal
+    if literal = this.literal
+      this.gsub(reg, str)
+    else
+      # abort pre-processing
+      nil
+    end}}
+
+  safe_method_for Array, [:map, Symbol] => {:method => 'nil', :class => nil, :pre_processor => self.map_proc}
+
   safe_method_for String, :upcase => {:class => String, :pre_processor => true}
 
   safe_method_for Time, [:strftime, String] => String
@@ -42,7 +75,7 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method [:hash_args, {'age' => Number, 'name' => String}] => String
   safe_method [:append_hash, Number, {'foo' => String}] => :make_append_hash
 
-  safe_method [:concat, String, String] => {:class => String, :pre_processor => Proc.new{|a,b| a + b }}
+  safe_method [:concat, String, String] => {:class => String, :pre_processor => Proc.new{|this,a,b| a + b }}
   safe_method [:find, String] => {:class => NilClass, :method => 'nil', :pre_processor => :build_finder}
 
   # methods on nil

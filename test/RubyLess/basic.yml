@@ -214,3 +214,12 @@ method_on_array:
 method_on_array_with_nil:
   src: "@foo.children.size"
   tem: "(node.children ? node.children.size : nil)"
+
+map_allowed_method:
+  src: "%w{45 52}.map(:to_i)"
+  tem: "[\"45\",\"52\"].map(&:to_i).compact"
+  res: "4552"
+
+map_forbidden_method:
+  src: "%w{45 52}.map(:foo)"
+  tem: "unknown method 'map(:foo)' for '[\"45\",\"52\"]' of type Array."
