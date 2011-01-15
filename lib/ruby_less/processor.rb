@@ -303,12 +303,16 @@ module RubyLess
             res = receiver.literal.send(*([method] + arg_list.map(&:literal)))
           end
           if res
-            if res.opts.nil?
+            if res.kind_of?(TypedString)
               # This can happen if we use native methods on TypedString (like gsub) that return a new
               # typedstring without calling initialize....
-              res.instance_variable_set(:@opts, :class => String, :literal => res)
+              if res.opts.nil?
+                res.instance_variable_set(:@opts, :class => String, :literal => res)
+              end
+              return res
+            else
+              return t(res.inspect, :class => String, :literal => res)
             end
-            return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
           end
         end
 

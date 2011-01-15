@@ -1,3 +1,8 @@
+== 0.8.2 2011-01-15
+
+* Minor enhancements
+  * Fixed a bug with literal value pre-processing.
+
 == 0.8.1 2011-01-15
 
 * Major enhancements
