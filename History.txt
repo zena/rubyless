@@ -1,3 +1,10 @@
+== 0.8.3
+
+* Minor enhancements
+  * Added some methods for basic types.
+  * Fixed a bug where evaluated string would be altered.
+  * Added support for true and false classes.
+
 == 0.8.2 2011-01-15
 
 * Minor enhancements

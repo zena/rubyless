@@ -168,6 +168,14 @@ class RubyLessTest < Test::Unit::TestCase
     typed_string = RubyLess::TypedString.new('marsupilami', :class => SubDummy, :message => 'Hello')
     assert_equal "marsupilami.says('Hello')", RubyLess.translate(typed_string, 'talk')
   end
+  
+  def test_should_not_alter_input_string
+    orig_str = 'contact where id #{params[:foo]} in site'
+    str = orig_str.dup
+    RubyLess.translate(self, str)
+  rescue RubyLess::Error => err
+    assert_equal orig_str, str
+  end
 
   def yt_do_test(file, test, context = yt_get('context',file,test))
     @@test_strings[file][test].keys.each do |key|

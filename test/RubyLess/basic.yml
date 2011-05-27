@@ -223,3 +223,11 @@ map_allowed_method:
 map_forbidden_method:
   src: "%w{45 52}.map(:foo)"
   tem: "unknown method 'map(:foo)' for '[\"45\",\"52\"]' of type Array."
+
+eval_true:
+  src: "true"
+  tem: "true"
+
+eval_false:
+  src: "false"
+  tem: "false"

@@ -52,6 +52,14 @@ module RubyLess
       end
     end
 
+    def process_true(*args)
+      t 'true', {:class => Boolean, :literal => true}
+    end
+
+    def process_false(*args)
+      t 'false', {:class => Boolean, :literal => false}
+    end
+
     def process_and(exp)
       t "(#{process(exp.shift)} and #{process(exp.shift)})", Boolean
     end
