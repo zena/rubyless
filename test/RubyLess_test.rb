@@ -22,7 +22,7 @@ class RubyLessTest < Test::Unit::TestCase
           end
           res = RubyLess::TypedString.new(res, :class => [type[:class]])
         else
-          raise RubyLess::NoMethodError.new(receiver.raw, receiver.klass, ['map', method])
+          raise RubyLess::NoMethodError.new(receiver.raw, "[#{receiver.klass}]", ['map', method])
         end
       else
         # should never happen
@@ -54,6 +54,8 @@ class RubyLessTest < Test::Unit::TestCase
     end}}
 
   safe_method_for Array, [:map, Symbol] => {:method => 'nil', :class => nil, :pre_processor => self.map_proc}
+
+  safe_method_for Array, [:join, String] => {:method => 'join', :class => String, :pre_processor => true}
 
   safe_method_for String, :upcase => {:class => String, :pre_processor => true}
 
@@ -168,7 +170,7 @@ class RubyLessTest < Test::Unit::TestCase
     typed_string = RubyLess::TypedString.new('marsupilami', :class => SubDummy, :message => 'Hello')
     assert_equal "marsupilami.says('Hello')", RubyLess.translate(typed_string, 'talk')
   end
-  
+
   def test_should_not_alter_input_string
     orig_str = 'contact where id #{params[:foo]} in site'
     str = orig_str.dup

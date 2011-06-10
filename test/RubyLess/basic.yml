@@ -164,10 +164,6 @@ accept_nil_in_no_nil:
   src: "no_nil(accept_nil(dictionary[:foo]))"
   tem: "no_nil(accept_nil(get_dict[:foo]))"
 
-parse_array:
-  src: "[3, 6]"
-  tem: '[3,6]'
-
 noop_method:
   src: 'no_op("hello")'
   tem: '("hello")'
@@ -222,7 +218,7 @@ map_allowed_method:
 
 map_forbidden_method:
   src: "%w{45 52}.map(:foo)"
-  tem: "unknown method 'map(:foo)' for '[\"45\",\"52\"]' of type Array."
+  tem: "unknown method 'map(:foo)' for '[\"45\",\"52\"]' of type [String]."
 
 eval_true:
   src: "true"
@@ -231,3 +227,15 @@ eval_true:
 eval_false:
   src: "false"
   tem: "false"
+
+number_array:
+  src: "[3, 6]"
+  tem: '[3,6]'
+
+string_array:
+  src: "%w{foo bar}.join(',')"
+  res: 'foo,bar'
+
+array_bad_method:
+  src: "%w{foo bar}.plop(',')"
+  res: "unknown method 'plop(String)' for '[\"foo\",\"bar\"]' of type [String]."
