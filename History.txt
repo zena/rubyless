@@ -1,10 +1,13 @@
 == 0.8.3
 
+* Major enhancements
+  * Better support for literal Arrays.
+  * Support for Hash methods and Hash literals.
+
 * Minor enhancements
   * Added some methods for basic types.
   * Fixed a bug where evaluated string would be altered.
   * Added support for true and false classes.
-  * Better support for literal Arrays.
 
 == 0.8.2 2011-01-15
 

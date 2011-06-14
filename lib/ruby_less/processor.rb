@@ -11,7 +11,11 @@ module RubyLess
 
     def self.translate(receiver, string)
       if sexp = RubyParser.new.parse(string)
-        self.new(receiver).process(sexp)
+        res = self.new(receiver).process(sexp)
+        if res.klass.kind_of?(Hash)
+          res.opts[:class] = Hash
+        end
+        res
       elsif string.size == 0
         ''
       else
@@ -237,7 +241,18 @@ module RubyLess
           cond = []
         end
 
-        opts = get_method(receiver, signature)
+        if receiver && receiver.klass.kind_of?(Hash)
+          # resolve now
+          if signature.first == '[]' && klass = receiver.klass[args.literal]
+            return receiver.hash[args.literal]
+          else
+            # safe_method_type on Hash... ?
+            receiver = TypedString.new(receiver, Hash)
+            opts = get_method(receiver, signature)
+          end
+        else
+          opts = get_method(receiver, signature)
+        end
 
         # method type can rewrite receiver
         if opts[:receiver]

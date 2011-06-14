@@ -13,32 +13,35 @@ module RubyLess
     # Return method type (options) if the given signature is a safe method for the class.
     def self.safe_method_type_for(klass, signature)
       if klass.kind_of?(Array)
-        return safe_method_type_for(Array, signature)
-      end
+        safe_method_type_for(Array, signature)
+      elsif klass.kind_of?(Hash)
+        nil # literal hash resolved in processor
+        klass = Hash
+      else
+        # Signature might be ['name', {:mode => String, :type => Number}].
+        # build signature arguments
 
-      # Signature might be ['name', {:mode => String, :type => Number}].
-      # build signature arguments
-
-      # Replace all hashes in signature by Hash class and check for arguments
-      signature_args = []
-      signature = signature.map do |s|
-        if s.kind_of?(Hash)
-          signature_args << s
-          Hash
-        else
-          signature_args << nil
-          s
+        # Replace all hashes in signature by Hash class and check for arguments
+        signature_args = []
+        signature = signature.map do |s|
+          if s.kind_of?(Hash)
+            signature_args << s
+            Hash
+          else
+            signature_args << nil
+            s
+          end
         end
-      end
 
-      # Find safe method in all ancestry
-      klass.ancestors.each do |ancestor|
-        # FIXME: find a way to optimize this search !
-        if type = safe_method_with_hash_args(ancestor, signature, signature_args)
-          return type
+        # Find safe method in all ancestry
+        klass.ancestors.each do |ancestor|
+          # FIXME: find a way to optimize this search !
+          if type = safe_method_with_hash_args(ancestor, signature, signature_args)
+            return type
+          end
         end
+        nil
       end
-      nil
     end
 
     def self.literal_class_for(klass)

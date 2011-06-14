@@ -57,6 +57,8 @@ class RubyLessTest < Test::Unit::TestCase
 
   safe_method_for Array, [:join, String] => {:method => 'join', :class => String, :pre_processor => true}
 
+  safe_method_for Hash, :to_param => String
+
   safe_method_for String, :upcase => {:class => String, :pre_processor => true}
 
   safe_method_for Time, [:strftime, String] => String
@@ -169,6 +171,12 @@ class RubyLessTest < Test::Unit::TestCase
   def test_translate_with_typed_string
     typed_string = RubyLess::TypedString.new('marsupilami', :class => SubDummy, :message => 'Hello')
     assert_equal "marsupilami.says('Hello')", RubyLess.translate(typed_string, 'talk')
+  end
+
+  def test_literal_hash_type
+    # Out of RubyLess::Processor, type is Hash, not {:foo => TypedString}.
+    typed_string = RubyLess.translate(self, %q{{:foo => 'bar'}})
+    assert_equal Hash, typed_string.klass
   end
 
   def test_should_not_alter_input_string

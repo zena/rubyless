@@ -2,6 +2,14 @@ parse_hash:
   src: "{'one' => 1, 2 => 'two'}"
   tem: "{\"one\" => 1, 2 => \"two\"}"
 
+literal_on_hash:
+  src: "{'one' => 1, 2 => 'two'}['one'] + 2"
+  tem: "(1+2)"
+
+method_on_hash:
+  src: "{'one' => 1, 2 => 'two'}.to_param"
+  tem: "{\"one\" => 1, 2 => \"two\"}.to_param"
+  
 hash_access:
   src: "dictionary[:key]"
   tem: "get_dict[:key]"
