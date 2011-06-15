@@ -1,4 +1,4 @@
-== 0.8.3
+== 0.8.3 2011-06-15
 
 * Major enhancements
   * Better support for literal Arrays.
