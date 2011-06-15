@@ -6,7 +6,6 @@ module RubyLess
 
     # List of safe methods for a specific class.
     def self.safe_methods_for(klass)
-      # Caching safe_methods_all is bad when modules are dynamically added / removed.
       @@_safe_methods_parsed[klass] ||= build_safe_methods_list(klass)
     end
 
@@ -58,6 +57,8 @@ module RubyLess
 
     # Declare a safe method for a given class ( same as #safe_method)
     def self.safe_method_for(klass, methods_hash)
+      @@_safe_methods_parsed[klass] = nil # rebuild cache
+
       defaults = methods_hash.delete(:defaults) || {}
 
       list = (@@_safe_methods[klass] ||= {})
@@ -243,16 +244,21 @@ module RubyLess
       def self.build_safe_methods_list(klass)
         list = SignatureHash.new
         (@@_safe_methods[klass] || {}).map do |signature, return_value|
-          if return_value.kind_of?(Hash)
-            return_value[:class] = parse_class(return_value[:class])
-          elsif return_value.kind_of?(Proc) || return_value.kind_of?(Symbol)
-            # keep
+          if return_value.frozen?
+            # Already parsed, skip
           else
-            return_value = {:class => return_value}
+            if return_value.kind_of?(Hash)
+              return_value[:class] = parse_class(return_value[:class])
+            elsif return_value.kind_of?(Proc) || return_value.kind_of?(Symbol)
+              # keep
+            else
+              return_value = {:class => return_value}
+            end
+            method = signature.shift
+            signature = [method] + signature.map {|e| parse_class(e)}
+            return_value.freeze
           end
-          method = signature.shift
-          signature = [method] + signature.map {|e| parse_class(e)}
-          list[signature] = return_value.freeze
+          list[signature] = return_value
         end
         list
       end

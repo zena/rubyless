@@ -1,3 +1,8 @@
+== 0.8.4
+
+* Minor enhancements
+  * Fixed: should clear cache on safe_method declaration.
+
 == 0.8.3 2011-06-15
 
 * Major enhancements
