@@ -65,6 +65,12 @@ You can look at the tests for an idea of how to declare things. If you have more
 
 http://zenadmin.org/community
 
+== WARNING:
+
+Changing the safe methods during runtime removes the cache for all classes and
+should therefore be avoided in favor of dynamic "safe_method_type" methods for the
+objects/classes concerned.
+
 == REQUIREMENTS:
 
 * parse_tree

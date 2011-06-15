@@ -57,7 +57,8 @@ module RubyLess
 
     # Declare a safe method for a given class ( same as #safe_method)
     def self.safe_method_for(klass, methods_hash)
-      @@_safe_methods_parsed[klass] = nil # rebuild cache
+      # This is why defining new safe methods during runtime is BAD.
+      @@_safe_methods_parsed = {} # rebuild all cache
 
       defaults = methods_hash.delete(:defaults) || {}
 
@@ -254,10 +255,9 @@ module RubyLess
             else
               return_value = {:class => return_value}
             end
-            method = signature.shift
-            signature = [method] + signature.map {|e| parse_class(e)}
             return_value.freeze
           end
+          signature = [signature.first] + signature[1..-1].map {|e| parse_class(e)}
           list[signature] = return_value
         end
         list
