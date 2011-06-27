@@ -98,8 +98,14 @@ class RubyLessTest < Test::Unit::TestCase
   # Example to dynamically rewrite method calls during compilation
   def safe_method_type(signature, receiver = nil)
     unless res = super
-      if signature == ['prepend_test', Number]
+      if signature == ['prepend_one'] || signature == ['prepend_one', Number]
         res ={:class => Number, :prepend_args => RubyLess::TypedString.new('10', :class => Number), :method => 'add'}
+      elsif signature == ['prepend_many'] || signature == ['prepend_many', Number]
+        res ={:class => Number, :prepend_args => [RubyLess::TypedString.new('10', :class => Number), RubyLess::TypedString.new('20', :class => Number)], :method => 'add'}
+      elsif signature == ['append_one'] || signature == ['append_one', Number]
+        res ={:class => Number, :append_args => RubyLess::TypedString.new('10', :class => Number), :method => 'add'}
+      elsif signature == ['append_many'] || signature == ['append_many', Number]
+        res ={:class => Number, :append_args => [RubyLess::TypedString.new('10', :class => Number), RubyLess::TypedString.new('20', :class => Number)], :method => 'add'}
       elsif context && res = context[:node_class].safe_method_type(signature)
         # try to execute method in the current var "var.method"
         res = res[:class].call(self, signature) if res[:class].kind_of?(Proc)
@@ -145,8 +151,8 @@ class RubyLessTest < Test::Unit::TestCase
     "str"
   end
 
-  def add(a,b)
-    a+b
+  def add(*args)
+    args.inject(0) {|s,a| s+a}
   end
 
   def vowel_count(str)

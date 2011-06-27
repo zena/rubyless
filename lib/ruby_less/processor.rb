@@ -400,11 +400,25 @@ module RubyLess
 
       def args_with_prepend(args, opts)
         if prepend_args = opts[:prepend_args]
+          if prepend_args.kind_of?(Array)
+            prepend_args = array_to_arguments(prepend_args)
+          end
           if args
             prepend_args.append_argument(args)
             args = prepend_args
           else
             args = prepend_args
+          end
+        end
+
+        if append_args = opts[:append_args]
+          if append_args.kind_of?(Array)
+            append_args = array_to_arguments(append_args)
+          end
+          if args
+            args.append_argument(append_args)
+          else
+            args = append_args
           end
         end
 
@@ -421,6 +435,14 @@ module RubyLess
           args.rebuild_arguments
         end
         args
+      end
+
+      def array_to_arguments(args)
+        code = t('')
+        args.each do |arg|
+          code.append_argument(arg)
+        end
+        code
       end
   end
 end

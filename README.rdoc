@@ -65,6 +65,19 @@ You can look at the tests for an idea of how to declare things. If you have more
 
 http://zenadmin.org/community
 
+== TRICKS:
+
+If you define your own 'safe_method_type' resolution methods, or you define a method by providing a symbol (method executed to get type), you can use the special :prepend_args and :append_args elements in the type response. You need to provide a TypedString or an array of TypedString and these elements will be inserted in the final method. This can be used to provide default values:
+
+    safe_method_type [:parse_date, String] => :get_parse_date
+
+    def get_parse_date(signature)
+      {:class => Time, :append_args => RubyLess::TypedString.new('visitor.tz', :class => TZInfo::Timezone)}
+    end
+
+    # parse_date('2003-12-01')
+    # ==> parse_date('2003-12-01', visitor.tz)
+
 == WARNING:
 
 Changing the safe methods during runtime removes the cache for all classes and

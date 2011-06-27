@@ -118,10 +118,25 @@ instance_variable:
   tem: "node.mazette"
   res: "Mazette !"
 
-prepend_arg:
-  src: "prepend_test(4)"
-  tem: "add(10, 4)"
-  res: "14"
+prepend_one:
+  src: "prepend_one(4) + prepend_one"
+  tem: "(add(10, 4)+add(10))"
+  res: "24"
+
+prepend_many:
+  src: "prepend_many(4) + prepend_many"
+  tem: "(add(10, 20, 4)+add(10, 20))"
+  res: "64"
+
+append_one:
+  src: "append_one(4) + append_one"
+  tem: "(add(4, 10)+add(10))"
+  res: "24"
+
+append_many:
+  src: "append_many(4) + append_many"
+  tem: "(add(4, 10, 20)+add(10, 20))"
+  res: "64"
 
 safe_property:
   src: "dog_name"

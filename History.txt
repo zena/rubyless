@@ -1,3 +1,8 @@
+== 0.8.5
+
+* Minor enhancements
+  * Added support for append_args and multiple prepend arguments.
+
 == 0.8.4 2011-06-15
 
 * Minor enhancements
