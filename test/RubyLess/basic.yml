@@ -254,3 +254,12 @@ string_array:
 array_bad_method:
   src: "%w{foo bar}.plop(',')"
   res: "unknown method 'plop(String)' for '[\"foo\",\"bar\"]' of type [String]."
+
+nil:
+  src: 'nil'
+  tem: 'nil'
+
+nil_in_op:
+  src: '(dictionary[:foo] == "something" ? "foo" : nil)'
+  tem: '(get_dict[:foo]=="something") ? "foo" : nil'
+  res: ''

@@ -64,6 +64,10 @@ module RubyLess
       t 'false', {:class => Boolean, :literal => false}
     end
 
+    def process_nil(*args)
+      t 'nil', {:class => NilClass, :literal => nil, :nil => true}
+    end
+
     def process_and(exp)
       t "(#{process(exp.shift)} and #{process(exp.shift)})", Boolean
     end
@@ -86,8 +90,18 @@ module RubyLess
       true_res  = process(exp.shift)
       false_res = process(exp.shift)
 
-      if true_res && false_res && true_res.klass != false_res.klass
-        raise RubyLess::SyntaxError.new("Error in conditional expression: '#{true_res}' and '#{false_res}' do not return results of same type (#{true_res.klass} != #{false_res.klass}).")
+      if true_res && false_res
+        if true_res.klass != false_res.klass
+          if true_res.klass == NilClass
+            # Change true_res to false_res class (could_be_nil? is true)
+            true_res.opts[:class] = false_res.klass
+          elsif false_res.klass == NilClass
+            # Change false_res to true_res class (could_be_nil? is true)
+            false_res.opts[:class] = true_res.klass
+          else
+            raise RubyLess::SyntaxError.new("Error in conditional expression: '#{true_res}' and '#{false_res}' do not return results of same type (#{true_res.klass} != #{false_res.klass}).")
+          end
+        end
       end
       raise RubyLess::SyntaxError.new("Error in conditional expression.") unless true_res || false_res
       opts = {}
