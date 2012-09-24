@@ -175,6 +175,12 @@ module RubyLess
     def process_dstr(exp)
       t "\"#{parse_dstr(exp)}\"", String
     end
+    
+    def process_dot2(exp)
+      a = process(exp.shift)
+      b = process(exp.shift)
+      t "(#{a}..#{b})", Range
+    end
 
     def process_evstr(exp)
       exp.empty? ? t('', String) : process(exp.shift)

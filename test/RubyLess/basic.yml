@@ -22,6 +22,18 @@ symbol:
   src: ":foobar"
   sxp: 's(:lit, :foobar)'
 
+range_lit:
+  src: '(0..4).to_a'
+  sxp: 's(:call, s(:lit, 0..4), :to_a, s(:arglist))'
+  tem: '[0, 1, 2, 3, 4]'
+
+range_to_a:
+  context:
+    x: 4
+  src: '(0..id).to_a'
+  sxp: "s(:call, s(:dot2, s(:lit, 0), s(:call, nil, :id, s(:arglist))), :to_a, s(:arglist))"
+  tem: '(0..node.zip).to_a'
+  
 rewrite_variables:
   src: "!prev.ancestor?(main) && !node.ancestor?(main)"
   tem: "(not previous.ancestor?(@node) and not node.ancestor?(@node))"
