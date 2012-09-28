@@ -53,13 +53,17 @@ nil_greater_then:
 
 nil_ternary_op:
   src: "spouse ? 'foo' : 'bar'"
-  tem: "node.spouse ? \"foo\" : \"bar\""
+  tem: "(node.spouse ? \"foo\" : \"bar\")"
   res: 'bar'
 
 nested_ternary_op:
   src: "spouse.name == 'Adam' ? 'man' : 'not a man'"
-  tem: "(node.spouse ? (node.spouse.name==\"Adam\") : nil) ? \"man\" : \"not a man\""
+  tem: "((node.spouse ? (node.spouse.name==\"Adam\") : nil) ? \"man\" : \"not a man\")"
   res: "not a man"
+
+one_minus_ternary_op:
+  src: "1 - (node.id == 0 ? 5 : node.id)"
+  tem: "(1-((node.zip==0) ? 5 : node.zip))"
 
 method_on_method:
   src: "project.name.to_s"
@@ -68,12 +72,12 @@ method_on_method:
 
 comp_ternary_op:
   src: "1 > 2 ? 'foo' : 'bar'"
-  tem: "(1>2) ? \"foo\" : \"bar\""
+  tem: "((1>2) ? \"foo\" : \"bar\")"
   res: "bar"
 
 method_ternary_op:
   src: "id > 2 ? 'foo' : 'bar'"
-  tem: "(node.zip>2) ? \"foo\" : \"bar\""
+  tem: "((node.zip>2) ? \"foo\" : \"bar\")"
   res: "foo"
 
 method_argument_can_be_nil:
@@ -273,5 +277,5 @@ nil:
 
 nil_in_op:
   src: '(dictionary[:foo] == "something" ? "foo" : nil)'
-  tem: '(get_dict[:foo]=="something") ? "foo" : nil'
+  tem: '((get_dict[:foo]=="something") ? "foo" : nil)'
   res: ''

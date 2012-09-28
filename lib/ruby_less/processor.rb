@@ -107,7 +107,7 @@ module RubyLess
       opts = {}
       opts[:nil] = true_res.nil? || true_res.could_be_nil? || false_res.nil? || false_res.could_be_nil?
       opts[:class] = true_res ? true_res.klass : false_res.klass
-      t "#{cond} ? #{true_res || 'nil'} : #{false_res || 'nil'}", opts
+      t "(#{cond} ? #{true_res || 'nil'} : #{false_res || 'nil'})", opts
     end
 
     def process_call(exp)

@@ -1,3 +1,8 @@
+== 0.8.8 2012-09-28
+
+* Minor enhancements
+  * Fixed a bug with ternary op missing parenthesis.
+  
 == 0.8.7 2012-09-24
 
 * Minor enhancements
