@@ -13,7 +13,7 @@ begin
     gem.email = "gaspard@teti.ch"
     gem.homepage = "http://zenadmin.org/546"
     gem.authors = ["Gaspard Bucher"]
-    gem.add_dependency 'ruby_parser', '>= 2.0.4'
+    gem.add_dependency 'ruby_parser', '~> 2.3.1'
     gem.add_dependency 'sexp_processor', '>= 3.0.1'
     gem.add_development_dependency "shoulda", ">= 0"
     gem.add_development_dependency "yamltest", ">= 0.6.0"
