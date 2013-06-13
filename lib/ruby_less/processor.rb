@@ -415,7 +415,11 @@ module RubyLess
         unless lit_class = RubyLess::SafeClass.literal_class_for(lit.class)
           raise RubyLess::SyntaxError.new("#{klass} literal not supported by RubyLess.")
         end
-        {:class => lit_class, :literal => lit}
+        if lit_class == Range
+          {:class => lit_class, :literal => lit, :raw => "(#{lit.inspect})"}
+        else
+          {:class => lit_class, :literal => lit}
+        end
       end
 
       def args_with_prepend(args, opts)
