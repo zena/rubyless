@@ -44,6 +44,7 @@ class RubyLessTest < Test::Unit::TestCase
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
   safe_method_for String, [:to_i] => {:class => Number, :pre_processor => true}
+  safe_method_for String, [:split, String] => {:class => [String], :pre_processor => true}
   safe_method_for String, [:gsub, Regexp, String] => {:class => String, :pre_processor => Proc.new {|this, reg, str|
     # We have to test if 'this' is a literal
     if literal = this.literal
@@ -86,6 +87,9 @@ class RubyLessTest < Test::Unit::TestCase
 
   # methods on nil
   safe_method_for Object, :blank? => Boolean
+  
+  # array context
+  safe_method :list => [String]
 
   def safe_const_type(constant)
     if constant == 'Page'
@@ -147,6 +151,10 @@ class RubyLessTest < Test::Unit::TestCase
 
   def sub
     SubDummy.new
+  end
+  
+  def list
+    %w{a b c}
   end
 
   def str

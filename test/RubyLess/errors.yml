@@ -79,3 +79,7 @@ unknown_constant:
 ternary_operator:
   src: "@foo ? 'xx' : 15"
   tem: "/Error in conditional expression.*String != Number/"
+
+unknown_method_in_list_ctx:
+  src: "list.upcase"
+  tem: "unknown method 'upcase()' for 'list' of type [String]."

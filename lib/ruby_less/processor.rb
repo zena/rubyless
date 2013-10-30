@@ -296,7 +296,7 @@ module RubyLess
               res = @helper.send(proc, *args.list.map(&:literal))
             end
 
-            return res.kind_of?(TypedString) ? res : t(res.inspect, :class => String, :literal => res)
+            return res.kind_of?(TypedString) ? res : t(res.inspect, :class => opts[:class], :literal => res)
           end
 
           if opts[:accept_nil]
@@ -350,11 +350,11 @@ module RubyLess
               # This can happen if we use native methods on TypedString (like gsub) that return a new
               # typedstring without calling initialize....
               if res.opts.nil?
-                res.instance_variable_set(:@opts, :class => String, :literal => res)
+                res.instance_variable_set(:@opts, :class => opts[:class], :literal => res)
               end
               return res
             else
-              return t(res.inspect, :class => String, :literal => res)
+              return t(res.inspect, :class => opts[:class], :literal => res)
             end
           end
         end

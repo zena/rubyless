@@ -26,3 +26,7 @@ equal:
   src: "str == 'str'"
   tem: '(str=="str")'
   res: 'true'
+
+split:
+  src: "'one.two'.split('.').join('/')"
+  tem: '"one/two"'
