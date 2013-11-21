@@ -1,3 +1,11 @@
+== 0.9.0
+
+* Major enhancements
+  * Enable multiline statements
+  * Enable variable assignment
+  * Enable block calls (add Block type in definition)
+  * Enable method definition with "define(:foo, String, String) do |a| ... end". Last argument is the return value.
+
 == 0.8.11 2013-10-30
 
 * Minor enhancement

@@ -6,7 +6,7 @@ class Dummy < RubyLess::ActiveRecordMock
   include DummyModule
   include RubyLess
 
-  attr_reader :name
+  attr_accessor :name
 
   safe_method  [:ancestor?, Dummy]  => Boolean
   safe_method  :parent              => {:class => 'Dummy', :special_option => 'foobar'},
@@ -21,11 +21,12 @@ class Dummy < RubyLess::ActiveRecordMock
                [:kind_of?, Class]   => Boolean,
                [:kind_of?, String]  => {:method => 'is_like?', :class  => Boolean},
                # helper, receiver, signature
-               :author => (Proc.new do |h, r, s| {:method => 'author', :class => Dummy} end)
+               :author => (Proc.new do |h, r, s| {:method => 'author', :class => Dummy} end),
+               [:name=, String]     => String
                #:author => {:method => 'author', :class => Dummy}
 
-               # just to test Proc.call
-               safe_method :proc_test =>  Proc.new {|h, r, s| {:class => String, :method => '""', :h => h, :r => r, :s => s}}
+  # just to test Proc.call
+  safe_method :proc_test =>  Proc.new {|h, r, s| {:class => String, :method => '""', :h => h, :r => r, :s => s}}
 
   safe_context :spouse  => 'Dummy',
                :husband => {:class => 'Dummy', :context => {:clever => 'no'}}

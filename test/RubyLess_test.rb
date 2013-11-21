@@ -6,6 +6,7 @@ class SubString < String
 end
 
 class RubyLessTest < Test::Unit::TestCase
+  TEST_KEYS = %w{sxp tem res}
   attr_reader :context
   yamltest :src_from_title => false
   include RubyLess
@@ -33,16 +34,20 @@ class RubyLessTest < Test::Unit::TestCase
 
   safe_method :prev => {:class => Dummy, :method => 'previous'}
   safe_method :main => {:class => Dummy, :method => '@node'}
+  safe_method :self => Proc.new {|h, r, s| {:class => h.context[:node_class], :method => h.context[:node]}}
   safe_method :node => Proc.new {|h, r, s| {:class => h.context[:node_class], :method => h.context[:node]}}
   safe_method :now   => {:class => Time,  :method => "Time.now"}
   safe_method :birth => {:class => Time, :method => "Date.parse('2009-06-02 18:44')"}
   safe_method 'dictionary' => {:class => StringDictionary, :method => 'get_dict'}
   safe_method [:vowel_count, String]    => Number
   safe_method [:log_info, Dummy, String]    => String
-  safe_method :foo => :contextual_method, :bar => :contextual_method
+  safe_method :foo  => :contextual_method, :bar => :contextual_method
+  
+  safe_method [:before, Symbol, Block] => NilClass
 
   safe_method_for String, [:==, String] => Boolean
   safe_method_for String, [:to_s] => String
+  safe_method_for String, [:+, String] => String
   safe_method_for String, [:to_i] => {:class => Number, :pre_processor => true}
   safe_method_for String, [:split, String] => {:class => [String], :pre_processor => true}
   safe_method_for String, [:gsub, Regexp, String] => {:class => String, :pre_processor => Proc.new {|this, reg, str|
@@ -94,6 +99,8 @@ class RubyLessTest < Test::Unit::TestCase
   def safe_const_type(constant)
     if constant == 'Page'
       {:method => 'Page', :class => Class}
+    elsif constant == 'String'
+      {:method => 'String', :class => Class}
     elsif constant =~ /^D/
       {:method => constant[0..2].upcase.inspect, :class => String, :literal => constant}
     else
@@ -146,7 +153,7 @@ class RubyLessTest < Test::Unit::TestCase
   end
 
   def node
-    Dummy.new
+    @node ||= Dummy.new
   end
 
   def sub
@@ -204,9 +211,12 @@ class RubyLessTest < Test::Unit::TestCase
   end
 
   def yt_do_test(file, test, context = yt_get('context',file,test))
-    @@test_strings[file][test].keys.each do |key|
-      next if ['src', 'context', 'str'].include?(key)
-      yt_assert yt_get(key,file,test), parse(key, file, test, context)
+    @node = Dummy.new
+    hash = @@test_strings[file][test]
+    TEST_KEYS.each do |key|
+      if hash.has_key?(key)
+        yt_assert yt_get(key, file, test), parse(key, file, test, context)
+      end
     end
   end
 

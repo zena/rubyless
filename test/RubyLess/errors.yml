@@ -64,10 +64,6 @@ syntax_error:
   src: "3 * / * 5"
   tem: "/nterminated string meets end of file/"
 
-no_lasagna_in_rubyless:
-  src: "foo = system"
-  tem: "'lasgn' not available in RubyLess."
-
 call_on_class:
   src: "Page.name"
   tem: "unknown method 'name()' for 'Page' of type Class."
@@ -83,3 +79,25 @@ ternary_operator:
 unknown_method_in_list_ctx:
   src: "list.upcase"
   tem: "unknown method 'upcase()' for 'list' of type [String]."
+
+redefine_variable:
+  src: |
+    a = 'hop'
+    a = main
+  tem: "Incompatible types. Setting 'a' to Dummy instead of String"
+
+define_variable_on_method:
+  src: |
+    define(:a, String) do
+      'hello'
+    end
+    a = main
+  tem: "Variable name conflicts with method 'a'."
+  
+define_method_on_variable:
+  src: |
+    a = main
+    define(:a, String) do
+      'hello'
+    end
+  tem: "Method name conflicts with variable 'a'."

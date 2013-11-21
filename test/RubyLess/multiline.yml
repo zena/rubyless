@@ -1,0 +1,75 @@
+assign:
+  src: "foo = 'hop'"
+  sxp: "s(:lasgn, :foo, s(:str, \"hop\"))"
+
+assign_prop:
+  src: |
+    self.name = 'hop'
+    name
+  tem: "node.name=(\"hop\")\nnode.name"
+  res: 'hop'
+
+var_assign_prop:
+  src: |
+    no = self
+    no.name = 'hop'
+    no.name
+  tem: '/\n_rl_no.name$/'
+
+# Enabling this can be a complex security issue. Better avoid.
+assign_ivar:
+  src: "@foo = 'hop'"
+  sxp: "s(:iasgn, :@foo, s(:str, \"hop\"))"
+  tem: "/'iasgn' not available in RubyLess./"
+
+multiline:
+  src: |
+    if true
+      vowel_count 'Hello'
+      author.name
+    else
+      @foo.name
+    end
+  tem: '/if true/'
+  res: 'bob'
+
+variable_nil:
+  src: |
+    if false
+      emails = "Hello,world".split(',')
+    end
+    emails.join('/') || 'nothing'
+  res: "nothing"
+
+variable_multi_set:
+  src: |
+    emails = ['yo', 'man']
+    if false
+      "Hello,world".split(',')
+    end
+    emails.join('/') || 'nothing'
+  res: "yo/man"
+
+variable_shadow_method:
+  src: |
+    self.name = 'hop'
+    name = 'yo'
+    name
+  tem: "/_rl_name$/"
+  res: 'yo'
+
+declare_block:
+  src: |
+    before :save do
+      self.name = 'new name'
+    end
+  tem: "before(:save) do\nnode.name=(\"new name\")\nend"
+
+define_method:
+  src: |
+    define(:hop, String, String, String) do |a,b|
+      ['hop',a, b].join(', ')
+    end
+    
+    hop 'x', 'y'
+  res: 'hop, x, y'
