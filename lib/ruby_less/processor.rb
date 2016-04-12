@@ -455,7 +455,7 @@ module RubyLess
         
         if !block && receiver && receiver.klass.kind_of?(Hash)
           # resolve now
-          if signature.first == '[]' && klass = receiver.klass[args.literal]
+          if signature.first == '[]' #&& klass = receiver.klass[args.literal]
             return receiver.hash[args.literal]
           else
             # safe_method_type on Hash... ?
