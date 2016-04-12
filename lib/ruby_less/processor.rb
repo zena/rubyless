@@ -604,7 +604,7 @@ module RubyLess
           type = klass.safe_method_type(signature, receiver)
         elsif klass.kind_of?(Array)
           unless type = SafeClass.safe_method_type_for(Array, signature)
-            raise RubyLess::NoMethodError.new(receiver, "[#{klass}]", signature)
+            raise RubyLess::NoMethodError.new(receiver, "#{klass}", signature)
           end
         elsif type = SafeClass.safe_method_type_for(klass, signature)
         end

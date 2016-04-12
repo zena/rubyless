@@ -23,7 +23,7 @@ class RubyLessTest < Test::Unit::TestCase
           end
           res = RubyLess::TypedString.new(res, :class => [type[:class]])
         else
-          raise RubyLess::NoMethodError.new(receiver.raw, "[#{receiver.klass}]", ['map', method])
+          raise RubyLess::NoMethodError.new(receiver.raw, "#{receiver.klass}", ['map', method])
         end
       else
         # should never happen

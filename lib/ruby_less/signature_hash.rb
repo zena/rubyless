@@ -2,7 +2,7 @@
 module RubyLess
   class SignatureHash < Hash
     alias get []
-    
+    ok = false
     # This method is used *A LOT*, make sure it stays as fast as possible.
     def [](signature)
       if type = get(signature)
@@ -14,13 +14,14 @@ module RubyLess
         ancestors = signature.map do |k|
           if k.kind_of?(Symbol)
             [k]
-          elsif k.kind_of?(Class) && k.name != ''
+          elsif k.kind_of?(Class) && k.name != '' && !k.name.nil?
             k.ancestors
           else
             static_types = false
             k.respond_to?(:ancestors) ? k.ancestors : [k]
           end
         end
+        value = nil
         each do |key, type|
           next unless key.size == size
           ok = true
@@ -32,10 +33,14 @@ module RubyLess
           end
           if ok
             # insert in cache if the signature does not contain dynamic types
-            self[signature] = type if static_types
-            return type
+            # self[signature] = type if static_types
+            # return type
+            value = type
+            break
           end
-        end
+        end # each
+        self[signature] = value if static_types
+        return value
       end
       nil
     end

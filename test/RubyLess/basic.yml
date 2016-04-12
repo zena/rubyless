@@ -169,31 +169,31 @@ optional_argument_subclass:
 
 simple_accept_nil:
   src: "accept_nil(dictionary[:foo])"
-  tem: "accept_nil(get_dict[:foo])"
+  tem: "accept_nil(([\"get_dict[:foo]\"] ? get_dict[:foo] : nil))"
 
 accept_nil_many_arguments:
   src: "accept_nil(dictionary[:foo], dictionary[:bar])"
-  tem: "accept_nil(get_dict[:foo], get_dict[:bar])"
+  tem: "accept_nil(([\"get_dict[:foo]\"] ? get_dict[:foo] : nil), ([\"get_dict[:bar]\"] ? get_dict[:bar] : nil))"
   res: "[\"Foo\", nil]"
 
 accept_nil_many_arguments_no_all_nil:
   src: "accept_nil('hop', dictionary[:bar])"
-  tem: "accept_nil(\"hop\", get_dict[:bar])"
+  tem: "accept_nil(\"hop\", ([\"get_dict[:bar]\"] ? get_dict[:bar] : nil))"
   res: "[\"hop\", nil]"
 
 no_nil_in_accept_nil:
   src: "accept_nil(no_nil(dictionary[:foo]))"
-  tem: "accept_nil((get_dict[:foo] ? no_nil(get_dict[:foo]) : nil))"
+  tem: "accept_nil(([\"get_dict[:foo]\"] ? no_nil(get_dict[:foo]) : nil))"
   res: "[\"Foo\", nil]"
 
 two_no_nil_in_accept_nil:
   src: "accept_nil(no_nil(dictionary[:foo]), no_nil(dictionary[:bar]))"
-  tem: "accept_nil((get_dict[:foo] ? no_nil(get_dict[:foo]) : nil), (get_dict[:bar] ? no_nil(get_dict[:bar]) : nil))"
+  tem: "accept_nil(([\"get_dict[:foo]\"] ? no_nil(get_dict[:foo]) : nil), ([\"get_dict[:bar]\"] ? no_nil(get_dict[:bar]) : nil))"
   res: "[\"Foo\", nil]"
 
 accept_nil_in_no_nil:
   src: "no_nil(accept_nil(dictionary[:foo]))"
-  tem: "no_nil(accept_nil(get_dict[:foo]))"
+  tem: "no_nil(accept_nil(([\"get_dict[:foo]\"] ? get_dict[:foo] : nil)))"
 
 noop_method:
   src: 'no_op("hello")'
@@ -245,7 +245,7 @@ method_on_array_with_nil:
 map_allowed_method:
   src: "%w{45 52}.map(:to_i)"
   tem: "[\"45\",\"52\"].map(&:to_i).compact"
-  res: "4552"
+  res: "[45, 52]"
 
 map_forbidden_method:
   src: "%w{45 52}.map(:foo)"
