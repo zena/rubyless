@@ -2,7 +2,7 @@
 module RubyLess
   class SignatureHash < Hash
     alias get []
-    ok = false
+
     # This method is used *A LOT*, make sure it stays as fast as possible.
     def [](signature)
       if type = get(signature)
